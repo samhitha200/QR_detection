@@ -1,4 +1,8 @@
+import os
 import cv2
+import numpy as np
+from skimage.feature import local_binary_pattern
+from skimage.measure import shannon_entropy
 
 def extract_white_area_features(image):
     features = []
