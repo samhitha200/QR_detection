@@ -1,3 +1,5 @@
+import cv2
+
 def extract_white_area_features(image):
     features = []
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
