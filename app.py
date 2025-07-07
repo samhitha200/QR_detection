@@ -16,9 +16,12 @@ st.caption("Distinguish between Original vs Recaptured QR codes")
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
-    # Read image
-    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-    image = cv2.imdecode(file_bytes, 1)
+    from PIL import Image
+
+    # Read image using PIL and convert to OpenCV format
+    image_pil = Image.open(uploaded_file).convert("RGB")
+    image = np.array(image_pil)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     if image is not None:
         st.image(image, channels="BGR", caption="Uploaded QR Code", use_column_width=True)
