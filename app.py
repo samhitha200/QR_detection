@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 from feature_extractor import extract_white_area_features
+from PIL import Image, ImageOps
 
 # Load the model
 model = load("rf_white_features.pkl")
@@ -37,13 +38,12 @@ st.markdown("<p style='text-align: center;'>Distinguish between Original vs Reca
 # File uploader
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
-# Function to display resized, centered image
 def display_fixed_size_image(image_cv2):
     image_rgb = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB)
     pil_img = Image.fromarray(image_rgb)
 
-    max_size = (400, 400)  # Resize to fit within 400x400 while keeping aspect ratio
-    pil_img.thumbnail(max_size, Image.ANTIALIAS)
+    max_size = (400, 400)  # Resize to fit within box
+    pil_img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
     buffered = BytesIO()
     pil_img.save(buffered, format="PNG")
