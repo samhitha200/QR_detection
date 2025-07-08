@@ -19,27 +19,25 @@ st.markdown("""
     .header-container {
         padding-top: 0.2rem;
         margin-bottom: -1rem;
+        text-align: center;
     }
     .header-container h1 {
         font-size: 1.5rem;
         color: var(--text-color);  
         margin-bottom: 0.2rem;
-        text-align: center;
     }
     .header-container p {
         font-size: 0.9rem;
         color: var(--text-color);  
-        text-align: center;
         margin-top: 0;
     }
 
-    .right-align-block {
+    .right-align-block, .left-align-block {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: 100%;
-        margin-top: 100px;
+        justify-content: flex-start;
+        padding-top: 60px;
     }
 
     .stButton > button {
@@ -80,17 +78,12 @@ st.markdown("""
         color: white;
     }
 
-    .divider {
-        position: absolute;
-        top: 120px;
-        left: 60%;
-        width: 2px;
-        height: 75%;
-        background-color: #777;
-        z-index: 5;
+    .column-divider {
+        border-left: 2px solid #777;
+        height: auto;
+        margin-top: 60px;
     }
     </style>
-    <div class="divider"></div>
 """, unsafe_allow_html=True)
 
 # Title
@@ -108,11 +101,12 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Layout
-left_col, right_col = st.columns([0.6, 0.4])
+# Layout with middle divider
+left_col, mid_col, right_col = st.columns([0.6, 0.02, 0.38])
 
 # ----- LEFT PANEL -----
 with left_col:
+    st.markdown('<div class="left-align-block">', unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
     image_pil = None
     if uploaded_file:
@@ -124,6 +118,11 @@ with left_col:
             f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px; margin-top: 10px;'/></div>",
             unsafe_allow_html=True
         )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ----- MIDDLE DIVIDER -----
+with mid_col:
+    st.markdown('<div class="column-divider"></div>', unsafe_allow_html=True)
 
 # ----- RIGHT PANEL -----
 with right_col:
