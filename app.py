@@ -92,11 +92,14 @@ if uploaded_files:
                     confidence = np.max(proba) * 100
 
                     card_class = "original" if label == "Original" else "recaptured"
-                    st.markdown(f"""
-                        <div class='result-card {card_class}'>
-                            {label}<br/>
-                            <span style='font-size: 0.9rem;'>Confidence: {confidence:.2f}%</span>
-                        </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(
+    f"""
+    <div style='text-align: center; padding: 10px; background-color: #f0f0f0; border: 1px solid #888; border-radius: 12px; display: inline-block;'>
+        <img src='data:image/jpeg;base64,{img_base64}' style='max-width: 100%; border-radius: 8px;'/>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
                 else:
                     st.warning("⚠️ Could not extract white area features.")
