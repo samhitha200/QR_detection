@@ -51,8 +51,7 @@ if uploaded_file:
             # Layout: image and result
             col1, col2 = st.columns([1, 1])
             with col1:
-                st.image(image, channels="BGR", caption="Uploaded QR Code", width=350)  # 👈 Increased size
-
+                st.markdown(f"<img src='data:image/jpeg;base64,{cv2.imencode('.jpg', image)[1].tobytes().hex()}' style='max-width: 100%; height: auto; border-radius: 10px;'/>", unsafe_allow_html=True)
             with col2:
                 st.markdown("### Prediction")
                 st.markdown(f"**Result:** `{label}`")
