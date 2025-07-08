@@ -79,7 +79,7 @@ def get_image_base64(pil_img):
     return base64.b64encode(byte_im).decode()
 
 # Two-pane layout
-left_col, right_col = st.columns([0.6, 0.4])
+left_col, right_col = st.columns([0.5, 0.5])
 
 # Left: Upload and display
 with left_col:
