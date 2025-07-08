@@ -13,41 +13,30 @@ model = load("rf_white_features.pkl")
 # Configure Streamlit page
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Header styling at top-left corner
+# Header styling at top-up middle
 st.markdown("""
     <style>
-    .custom-header {
-        position: absolute;
-        top: 10px;
-        left: 20px;
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: #333333;
-        z-index: 1000;
+    .header-container {
+        padding-top: 0.2rem;
+        margin-bottom: -1rem;
     }
-    .custom-subtitle {
-        position: absolute;
-        top: 40px;
-        left: 20px;
-        font-size: 0.9rem;
-        color: #666666;
-        z-index: 1000;
-    }
-    .result-card {
-        padding: 1rem;
-        border-radius: 12px;
-        color: white;
-        font-weight: bold;
+    .header-container h1 {
+        font-size: 1.5rem;
+        color: #222;
+        margin-bottom: 0.2rem;
         text-align: center;
-        font-size: 1.3rem;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        margin-top: 1.5rem;
     }
-    .original { background-color: #2e7d32; }
-    .recaptured { background-color: #ef6c00; }
+    .header-container p {
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+        margin-top: 0;
+    }
     </style>
-    <div class="custom-header">QR Code Authenticity Validator</div>
-    <div class="custom-subtitle">Distinguish between Original vs Recaptured QR codes</div>
+    <div class="header-container">
+        <h1>QR Code Authenticity Validator</h1>
+        <p>Distinguish between Original vs Recaptured QR codes</p>
+    </div>
 """, unsafe_allow_html=True)
 
 # Helper to convert image to base64 for display
