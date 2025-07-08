@@ -97,7 +97,7 @@ with left_col:
 
 # Right: Centered Verify button (same level as uploader) + results
 with right_col:
-    st.markdown('<div class="center-button">', unsafe_allow_html=True)
+    st.markdown('<div style="display: flex; justify-content: center; align-items: center; height: 150px;">', unsafe_allow_html=True)
     verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
     st.markdown('</div>', unsafe_allow_html=True)
 
