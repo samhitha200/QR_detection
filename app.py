@@ -8,22 +8,35 @@ from feature_extractor import extract_white_area_features
 # Load the model
 model = load("rf_white_features.pkl")
 
-# UI setup
+# Page setup
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
+
+# Reduce top padding using custom CSS
+st.markdown(
+    """
+    <style>
+        .block-container {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Heading
 st.markdown("<h1 style='text-align: center;'>QR Code Authenticity Validator</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Distinguish between Original vs Recaptured QR codes</p>", unsafe_allow_html=True)
 
-# Upload section
+# File uploader placed just below header
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
-    # Load and convert image
     image_pil = Image.open(uploaded_file).convert("RGB")
     image = np.array(image_pil)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     if image is not None:
-        # Feature extraction
         features = extract_white_area_features(image)
 
         if features is not None:
@@ -32,10 +45,10 @@ if uploaded_file:
             label = "Original" if prediction == 0 else "Recaptured"
             confidence = np.max(proba) * 100
 
-            # 2-column layout with reduced image size
+            # Layout: image and result
             col1, col2 = st.columns([1, 1])
             with col1:
-                st.image(image, channels="BGR", caption="Uploaded QR Code", width=250)  # 👈 reduced size here
+                st.image(image, channels="BGR", caption="Uploaded QR Code", width=350)  # 👈 Increased size
 
             with col2:
                 st.markdown("### Prediction")
