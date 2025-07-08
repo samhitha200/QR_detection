@@ -13,19 +13,19 @@ model = load("rf_white_features.pkl")
 # Page setup
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Custom styling
+# Custom CSS
 st.markdown("""
     <style>
     .block-container {
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
-    .stFileUploader {
-        padding: 0.3rem 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-    .stFileUploader > div:first-child {
-        font-size: 0.85rem;
+    img.resized-img {
+        width: 400px;
+        height: 400px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #555;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -37,25 +37,19 @@ st.markdown("<p style='text-align: center;'>Distinguish between Original vs Reca
 # File uploader
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
-# Image display helper
-def display_resized_image(image_cv2):
-    from PIL import Image
+# Helper to resize and embed image
+def display_fixed_size_image(image_cv2):
+    # Convert to PIL and resize to fixed size
     image_rgb = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB)
     pil_img = Image.fromarray(image_rgb)
-
-    # Resize if too wide
-    max_width = 600
-    if pil_img.width > max_width:
-        ratio = max_width / pil_img.width
-        new_size = (max_width, int(pil_img.height * ratio))
-        pil_img = pil_img.resize(new_size)
+    pil_img = pil_img.resize((400, 400))  # Resize to fixed 400x400
 
     buffered = BytesIO()
     pil_img.save(buffered, format="PNG")
-    img_str = base64.b64encode(buffered.getvalue()).decode()
+    img_b64 = base64.b64encode(buffered.getvalue()).decode()
     
     st.markdown(
-        f"<img src='data:image/png;base64,{img_str}' style='max-width:100%; height:auto; border-radius:10px;'>",
+        f"<img src='data:image/png;base64,{img_b64}' class='resized-img'/>",
         unsafe_allow_html=True
     )
 
@@ -74,10 +68,10 @@ if uploaded_file:
             label = "Original" if prediction == 0 else "Recaptured"
             confidence = np.max(proba) * 100
 
-            # Display image and result side-by-side
+            # Display image and prediction side-by-side
             col1, col2 = st.columns([1, 1])
             with col1:
-                display_resized_image(image)
+                display_fixed_size_image(image)
             with col2:
                 st.markdown("### Prediction")
                 st.markdown(f"**Result:** `{label}`")
