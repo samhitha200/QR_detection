@@ -54,12 +54,6 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    .center-button {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -84,6 +78,7 @@ left_col, right_col = st.columns([0.6, 0.4])
 # Left: Upload and display
 with left_col:
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
+    image_pil = None
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
@@ -94,17 +89,19 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Right: Verify button + result
+# Right: Always show the Verify button
 with right_col:
-    if uploaded_file:
-        # Create a centered layout container for button and result card
-        st.markdown("""
-            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-        """, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)  # spacing to match left side
 
-        verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
+    # Centered container
+    st.markdown("""
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+    """, unsafe_allow_html=True)
 
-        if verify_button:
+    verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
+
+    if verify_button:
+        if image_pil is not None:
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             features = extract_white_area_features(image_cv2)
@@ -124,7 +121,8 @@ with right_col:
                 """, unsafe_allow_html=True)
             else:
                 st.warning("⚠️ Could not extract white area features.")
+        else:
+            st.warning("⚠️ Please upload a QR code image first.")
 
-        # Close the flexbox container
-        st.markdown("</div>", unsafe_allow_html=True)
-
+    # Close centered container
+    st.markdown("</div>", unsafe_allow_html=True)
