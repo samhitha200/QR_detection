@@ -22,20 +22,20 @@ st.markdown("""
     }
     .header-container h1 {
         font-size: 1.5rem;
-        color: white;
+        color: var(--text-color);  
         margin-bottom: 0.2rem;
         text-align: center;
     }
     .header-container p {
         font-size: 0.9rem;
-        color: white;
+        color: var(--text-color);  
         text-align: center;
         margin-top: 0;
     }
     .result-card {
         padding: 0.7rem;
         border-radius: 12px;
-        color: white;
+        color: var(--text-color); 
         font-weight: bold;
         text-align: center;
         font-size: 1rem;
