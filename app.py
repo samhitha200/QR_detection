@@ -13,7 +13,7 @@ model = load("rf_white_features.pkl")
 # Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# CSS for styling
+# CSS styling
 st.markdown("""
     <style>
     .header-container {
@@ -40,7 +40,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 1rem;
+        margin-top: 2.5rem;  /* More space added here */
         border: 2px solid;
         width: 60%;
         margin-left: auto;
@@ -58,8 +58,20 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 200px;
+    }
+    .separator {
+        border-left: 2px solid #555;
         height: 100%;
-        margin-top: 3.2rem;
+        margin: 0 1rem;
+    }
+    button[kind="secondary"] {
+        font-size: 1.2rem !important;
+        padding: 0.8rem 2rem !important;
+        border-radius: 8px !important;
+        border: 2px solid #ef5350 !important;
+        background-color: #1e1e1e !important;
+        color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -79,10 +91,10 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Two-pane layout
-left_col, right_col = st.columns([0.6, 0.4])
+# Layout with separator
+left_col, spacer, right_col = st.columns([0.45, 0.02, 0.53])
 
-# Left: Upload and display
+# Left: Upload and preview
 with left_col:
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
     image_pil = None
@@ -96,14 +108,17 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Right: Centered Verify button
+# Vertical line separator
+with spacer:
+    st.markdown("<div class='separator'></div>", unsafe_allow_html=True)
+
+# Right: Button and Results
 with right_col:
     st.markdown('<div class="verify-container">', unsafe_allow_html=True)
-    verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
+    verify_clicked = st.button("🔍 Verify QR", key="verify_button_centered")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Prediction logic
-    if verify_button:
+    if verify_clicked:
         if image_pil is not None:
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
