@@ -101,7 +101,7 @@ with right_col:
         verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if verify_button:
+        if clicked:
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             features = extract_white_area_features(image_cv2)
