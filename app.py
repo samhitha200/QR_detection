@@ -97,14 +97,16 @@ with left_col:
 # Right: Verify button + result
 with right_col:
     if uploaded_file:
-        st.markdown("<div class='center-button'>", unsafe_allow_html=True)
-        verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        if clicked:
+        with st.form(key="verify_form"):
+            st.markdown("<div class='center-button'>", unsafe_allow_html=True)
+            submitted = st.form_submit_button(label="🔍 Verify QR")
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+            if uploaded_file and submitted:
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             features = extract_white_area_features(image_cv2)
+            
 
             if features is not None:
                 prediction = model.predict([features])[0]
