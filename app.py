@@ -12,7 +12,7 @@ model = load("rf_white_features.pkl")
 
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# ---------- CSS Styles ----------
+# ---------- CSS -----------
 st.markdown("""
     <style>
     .header-container {
@@ -35,10 +35,8 @@ st.markdown("""
     .right-align-block {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        height: 100%;
-        padding-top: 6rem;
+        margin-top: 6rem;
     }
     .stButton>button {
         font-size: 18px !important;
@@ -55,7 +53,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 2rem;
+        margin-top: 3rem;
         border: 2px solid;
         width: 60%;
     }
@@ -72,7 +70,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---------- Header ----------
+# ---------- Header -----------
 st.markdown("""
     <div class="header-container">
         <h1>QR Code Authenticity Validator</h1>
@@ -80,16 +78,16 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Helper to convert image to base64
+# Helper to base64 image
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
     return base64.b64encode(buf.getvalue()).decode()
 
-# ---------- Layout Columns ----------
+# ---------- Columns ----------
 left_col, mid_col, right_col = st.columns([0.54, 0.02, 0.44])
 
-# ---------- Left Column: Upload and Image Preview ----------
+# ---------- Left Panel: Upload ----------
 with left_col:
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
     image_pil = None
@@ -103,12 +101,13 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# ---------- Center Column: Divider ----------
+# ---------- Middle Separator ----------
 with mid_col:
     st.markdown("<div class='separator'></div>", unsafe_allow_html=True)
 
-# ---------- Right Column: Button & Result Aligned to Image ----------
+# ---------- Right Panel: Button + Result aligned to image ----------
 with right_col:
+    # Add spacing to vertically center with image
     st.markdown("<div class='right-align-block'>", unsafe_allow_html=True)
 
     verify_clicked = st.button("🔍 Verify QR", key="verify_button")
