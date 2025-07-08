@@ -90,9 +90,12 @@ with left_col:
 # Right Panel: Centered Button + Result
 with right_col:
     if uploaded_file:
-        # Centered layout using flexbox
-        st.markdown("<div style='display: flex; flex-direction: column; align-items: center;'>", unsafe_allow_html=True)
+        # Container to vertically center the button and result
+        st.markdown("""
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        """, unsafe_allow_html=True)
 
+        # Centered Button
         verify_button = st.button("🔍 Verify QR")
 
         if verify_button:
