@@ -5,10 +5,13 @@ from joblib import load
 from PIL import Image
 from feature_extractor import extract_white_area_features
 
+# Load the model
+model = load("rf_white_features.pkl")
+
 # Configure Streamlit page
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# --- Remove excess padding using CSS ---
+# --- Custom CSS to reduce top padding ---
 st.markdown("""
     <style>
         .block-container {
@@ -27,16 +30,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Header
+# Title and caption
 st.title("QR Code Authenticity Validator")
 st.caption("Distinguish between Original vs Recaptured QR codes")
 
-# File Upload
+# Upload image
 uploaded_file = st.file_uploader(
-    "Upload a QR Code image (.jpg/.jpeg/.png)", 
+    "Upload a QR Code image (.jpg/.jpeg/.png)",
     type=["jpg", "jpeg", "png"]
 )
 
+# Process if file is uploaded
 if uploaded_file:
     image_pil = Image.open(uploaded_file).convert("RGB")
     image = np.array(image_pil)
@@ -50,7 +54,6 @@ if uploaded_file:
         label = "Original" if prediction == 0 else "Recaptured"
         confidence = np.max(proba) * 100
 
-        # Two-column layout
         col1, col2 = st.columns([1, 1])
 
         with col1:
