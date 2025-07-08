@@ -11,18 +11,21 @@ model = load("rf_white_features.pkl")
 # Page setup
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Reduce top padding using custom CSS
-st.markdown(
-    """
+st.markdown("""
     <style>
-        .block-container {
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    .stFileUploader {
+        padding: 0.3rem 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .stFileUploader > div:first-child {
+        font-size: 0.85rem;
+    }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # Heading
 st.markdown("<h1 style='text-align: center;'>QR Code Authenticity Validator</h1>", unsafe_allow_html=True)
