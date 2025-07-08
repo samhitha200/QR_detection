@@ -79,7 +79,7 @@ def get_image_base64(pil_img):
     return base64.b64encode(byte_im).decode()
 
 # Two-pane layout
-left_col, right_col = st.columns([1, 1.2])
+left_col, right_col = st.columns([0.6, 0.4])
 
 # Left: Upload and display
 with left_col:
@@ -87,7 +87,7 @@ with left_col:
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
-        resized.thumbnail((500, 500))
+        resized.thumbnail((400, 400))
         img_base64 = get_image_base64(resized)
         st.markdown(
             f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/></div>",
