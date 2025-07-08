@@ -78,7 +78,14 @@ left_col, right_col = st.columns([1, 1.2])
 with left_col:
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
-        st.image(uploaded_file, use_column_width=True)
+        image_pil = Image.open(uploaded_file).convert("RGB")
+        resized = image_pil.copy()
+        resized.thumbnail((300, 300))  # Resize to max 300x300
+        img_base64 = get_image_base64(resized)
+        st.markdown(
+    f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/></div>",
+    unsafe_allow_html=True
+)
 
 # Right: Verify button + result
 with right_col:
