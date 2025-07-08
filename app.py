@@ -16,28 +16,18 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 # ----- CSS Styling -----
 st.markdown("""
     <style>
-    .header-container {
-        padding-top: 0.2rem;
-        margin-bottom: -1rem;
-        text-align: center;
-    }
-    .header-container h1 {
-        font-size: 1.5rem;
-        color: var(--text-color);  
-        margin-bottom: 0.2rem;
-    }
-    .header-container p {
-        font-size: 0.9rem;
-        color: var(--text-color);  
-        margin-top: 0;
-    }
-
-    .right-align-block, .left-align-block {
+    .pane-container {
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
-        justify-content: flex-start;
-        padding-top: 60px;
+        height: 100%;
+        padding-top: 40px;
+    }
+
+    .upload-preview {
+        text-align: center;
+        margin-top: 20px;
     }
 
     .stButton > button {
@@ -56,8 +46,8 @@ st.markdown("""
 
     .result-card {
         margin-top: 2rem;
-        padding: 1rem;
-        font-size: 1.05rem;
+        padding: 1.2rem 2rem;
+        font-size: 1.1rem;
         font-weight: bold;
         border-radius: 14px;
         box-shadow: 0 0 12px rgba(0,0,0,0.2);
@@ -77,58 +67,42 @@ st.markdown("""
         border-color: #bf360c;
         color: white;
     }
-
-    .column-divider {
-        border-left: 2px solid #777;
-        height: auto;
-        margin-top: 60px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("""
-    <div class="header-container">
-        <h1>QR Code Authenticity Validator</h1>
-        <p>Distinguish between Original vs Recaptured QR codes</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Helper function
+# Helper to convert image to base64
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Layout with middle divider
-left_col, mid_col, right_col = st.columns([0.6, 0.02, 0.38])
+# ---- Layout: Two-Pane Split ----
+left_col, right_col = st.columns([0.6, 0.4])
 
-# ----- LEFT PANEL -----
+# ----- LEFT PANE -----
 with left_col:
-    st.markdown('<div class="left-align-block">', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
+    st.markdown('<div class="pane-container">', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("📁 Upload QR Code Image", type=["jpg", "jpeg", "png"])
     image_pil = None
+
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
         resized.thumbnail((400, 400))
         img_base64 = get_image_base64(resized)
-        st.markdown(
-            f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px; margin-top: 10px;'/></div>",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+            <div class='upload-preview'>
+                <img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/>
+            </div>
+        """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ----- MIDDLE DIVIDER -----
-with mid_col:
-    st.markdown('<div class="column-divider"></div>', unsafe_allow_html=True)
-
-# ----- RIGHT PANEL -----
+# ----- RIGHT PANE -----
 with right_col:
-    st.markdown('<div class="right-align-block">', unsafe_allow_html=True)
+    st.markdown('<div class="pane-container">', unsafe_allow_html=True)
     verify_button = st.button("🔍 Verify QR")
-    
+
     if verify_button:
         if image_pil is not None:
             image_np = np.array(image_pil)
@@ -138,10 +112,10 @@ with right_col:
             if features is not None:
                 prediction = model.predict([features])[0]
                 proba = model.predict_proba([features])[0]
-                label = "Original" if prediction == 0 else "Recaptured"
+                label = "ORIGINAL" if prediction == 0 else "RECAPTURED"
                 confidence = np.max(proba) * 100
 
-                card_class = "original" if label == "Original" else "recaptured"
+                card_class = "original" if label == "ORIGINAL" else "recaptured"
                 st.markdown(f"""
                     <div class='result-card {card_class}'>
                         {label}<br/>
@@ -149,7 +123,7 @@ with right_col:
                     </div>
                 """, unsafe_allow_html=True)
             else:
-                st.warning("⚠️ Could not extract white area features.")
+                st.warning("⚠️ Feature extraction failed.")
         else:
-            st.warning("⚠️ Please upload a QR code image first.")
+            st.warning("⚠️ Please upload an image first.")
     st.markdown('</div>', unsafe_allow_html=True)
