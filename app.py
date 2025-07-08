@@ -7,16 +7,32 @@ from feature_extractor import extract_white_area_features
 from io import BytesIO
 import base64
 
-# Load model
+# Load the trained model
 model = load("rf_white_features.pkl")
 
-# Page config
+# Configure Streamlit page
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# CSS styling
+# Header styling at top-left corner
 st.markdown("""
     <style>
-    h1, p { text-align: center; }
+    .custom-header {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #333333;
+        z-index: 1000;
+    }
+    .custom-subtitle {
+        position: absolute;
+        top: 40px;
+        left: 20px;
+        font-size: 0.9rem;
+        color: #666666;
+        z-index: 1000;
+    }
     .result-card {
         padding: 1rem;
         border-radius: 12px;
@@ -30,13 +46,11 @@ st.markdown("""
     .original { background-color: #2e7d32; }
     .recaptured { background-color: #ef6c00; }
     </style>
+    <div class="custom-header">QR Code Authenticity Validator</div>
+    <div class="custom-subtitle">Distinguish between Original vs Recaptured QR codes</div>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("<h1>QR Code Authenticity Validator</h1>", unsafe_allow_html=True)
-st.markdown("<p>Distinguish between Original vs Recaptured QR codes</p>", unsafe_allow_html=True)
-
-# Helper
+# Helper to convert image to base64 for display
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
@@ -51,12 +65,12 @@ if "result" not in st.session_state:
 if "confidence" not in st.session_state:
     st.session_state.confidence = None
 
-# Two-pane layout
+# Layout: Two columns (left for upload + preview, right for processing + result)
 left_col, right_col = st.columns([1, 1.2])
 
-# 🔲 Left Panel — Upload and Image Preview
+# 📤 Left Column — Upload and preview
 with left_col:
-    uploaded_file = st.file_uploader("📤 Upload QR Code Image", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Upload QR Code Image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         st.session_state.image_pil = image_pil
@@ -74,7 +88,7 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# 🔳 Right Panel — Button + Result Card
+#  Right Column — Button + Result
 with right_col:
     st.write("### ")
     st.write("### ")
@@ -96,6 +110,7 @@ with right_col:
             else:
                 st.warning("⚠️ Could not extract white area features.")
 
+    # Show result
     if st.session_state.result:
         label = st.session_state.result
         conf = st.session_state.confidence
