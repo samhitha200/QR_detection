@@ -54,11 +54,12 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    .center-button {
+    .verify-container {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
-        height: 100px;
+        align-items: center;
+        height: 100%;
+        margin-top: 3.2rem;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -95,12 +96,13 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Right: Centered Verify button (same level as uploader) + results
+# Right: Centered Verify button
 with right_col:
-    st.markdown('<div style="display: flex; justify-content: center; align-items: center; height: 150px;">', unsafe_allow_html=True)
+    st.markdown('<div class="verify-container">', unsafe_allow_html=True)
     verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
     st.markdown('</div>', unsafe_allow_html=True)
 
+    # Prediction logic
     if verify_button:
         if image_pil is not None:
             image_np = np.array(image_pil)
