@@ -3,59 +3,55 @@ import numpy as np
 import cv2
 from joblib import load
 from PIL import Image
-from io import BytesIO
-import base64
 from feature_extractor import extract_white_area_features
-from PIL import Image, ImageOps
+import base64
+from io import BytesIO
 
-# Load the model
+# Load model
 model = load("rf_white_features.pkl")
 
-# Page setup
+# Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Custom CSS
+# Custom style to reduce padding and heading size
 st.markdown("""
     <style>
     .block-container {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    h1 {
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+    }
+    p {
+        font-size: 0.9rem;
+        margin-top: 0.1rem;
+        margin-bottom: 0.4rem;
     }
     .stFileUploader {
-        padding: 0.3rem 0.5rem;
+        padding: 0.2rem 0.5rem;
         margin-bottom: 0.5rem;
-    }
-    .stFileUploader > div:first-child {
-        font-size: 0.85rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Title and subtitle
+# Header
 st.markdown("<h1 style='text-align: center;'>QR Code Authenticity Validator</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Distinguish between Original vs Recaptured QR codes</p>", unsafe_allow_html=True)
 
 # File uploader
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
-def display_fixed_size_image(image_cv2):
-    image_rgb = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB)
-    pil_img = Image.fromarray(image_rgb)
+# Helper to display image with fixed size
+def get_image_base64(pil_img):
+    buf = BytesIO()
+    pil_img.save(buf, format="JPEG")
+    byte_im = buf.getvalue()
+    return base64.b64encode(byte_im).decode()
 
-    max_size = (400, 400)  # Resize to fit within box
-    pil_img.thumbnail(max_size, Image.Resampling.LANCZOS)
-
-    buffered = BytesIO()
-    pil_img.save(buffered, format="PNG")
-    img_b64 = base64.b64encode(buffered.getvalue()).decode()
-
-    st.markdown(f"""
-        <div style="display: flex; justify-content: center; align-items: center; height: 100%; min-height: 420px;">
-            <img src="data:image/png;base64,{img_b64}" style="max-width: 100%; height: auto; border-radius: 10px; border: 1px solid #444;" />
-        </div>
-    """, unsafe_allow_html=True)
-
-# If image is uploaded
 if uploaded_file:
     image_pil = Image.open(uploaded_file).convert("RGB")
     image = np.array(image_pil)
@@ -70,14 +66,22 @@ if uploaded_file:
             label = "Original" if prediction == 0 else "Recaptured"
             confidence = np.max(proba) * 100
 
-            # Display results
+            # Display layout
             col1, col2 = st.columns([1, 1])
             with col1:
-                display_fixed_size_image(image)
+                resized = image_pil.copy()
+                resized.thumbnail((400, 400))  # Resize for display
+                img_base64 = get_image_base64(resized)
+                st.markdown(
+                    f"<div style='display: flex; justify-content: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/></div>",
+                    unsafe_allow_html=True
+                )
+
             with col2:
                 st.markdown("### Prediction")
                 st.markdown(f"**Result:** `{label}`")
                 st.markdown(f"**Confidence:** `{confidence:.2f}%`")
+
         else:
             st.warning("Not enough white area detected in the image to extract features.")
     else:
