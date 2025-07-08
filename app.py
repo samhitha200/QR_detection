@@ -20,40 +20,42 @@ st.markdown("""
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
-    img.resized-img {
-        width: 400px;
-        height: 400px;
-        object-fit: contain;
-        border-radius: 10px;
-        border: 1px solid #555;
+    .stFileUploader {
+        padding: 0.3rem 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .stFileUploader > div:first-child {
+        font-size: 0.85rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Heading
+# Title and subtitle
 st.markdown("<h1 style='text-align: center;'>QR Code Authenticity Validator</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Distinguish between Original vs Recaptured QR codes</p>", unsafe_allow_html=True)
 
 # File uploader
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
-# Helper to resize and embed image
+# Function to display resized, centered image
 def display_fixed_size_image(image_cv2):
-    # Convert to PIL and resize to fixed size
     image_rgb = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB)
     pil_img = Image.fromarray(image_rgb)
-    pil_img = pil_img.resize((400, 400))  # Resize to fixed 400x400
+
+    max_size = (400, 400)  # Resize to fit within 400x400 while keeping aspect ratio
+    pil_img.thumbnail(max_size, Image.ANTIALIAS)
 
     buffered = BytesIO()
     pil_img.save(buffered, format="PNG")
     img_b64 = base64.b64encode(buffered.getvalue()).decode()
-    
-    st.markdown(
-        f"<img src='data:image/png;base64,{img_b64}' class='resized-img'/>",
-        unsafe_allow_html=True
-    )
 
-# Prediction section
+    st.markdown(f"""
+        <div style="display: flex; justify-content: center; align-items: center; height: 100%; min-height: 420px;">
+            <img src="data:image/png;base64,{img_b64}" style="max-width: 100%; height: auto; border-radius: 10px; border: 1px solid #444;" />
+        </div>
+    """, unsafe_allow_html=True)
+
+# If image is uploaded
 if uploaded_file:
     image_pil = Image.open(uploaded_file).convert("RGB")
     image = np.array(image_pil)
@@ -68,7 +70,7 @@ if uploaded_file:
             label = "Original" if prediction == 0 else "Recaptured"
             confidence = np.max(proba) * 100
 
-            # Display image and prediction side-by-side
+            # Display results
             col1, col2 = st.columns([1, 1])
             with col1:
                 display_fixed_size_image(image)
