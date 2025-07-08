@@ -97,8 +97,9 @@ with left_col:
 # Right: Verify button + result
 with right_col:
     if uploaded_file:
+        # Create a centered layout container for button and result card
         st.markdown("""
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
         """, unsafe_allow_html=True)
 
         verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
@@ -124,5 +125,6 @@ with right_col:
             else:
                 st.warning("⚠️ Could not extract white area features.")
 
+        # Close the flexbox container
         st.markdown("</div>", unsafe_allow_html=True)
 
