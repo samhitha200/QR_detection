@@ -87,7 +87,7 @@ def get_image_base64(pil_img):
     return base64.b64encode(buf.getvalue()).decode()
 
 # ---------- Layout Columns ----------
-left_col, mid_col, right_col = st.columns([0.45, 0.02, 0.53])
+left_col, mid_col, right_col = st.columns([0.54, 0.02, 0.44])
 
 # ---------- Left Column: Upload and Image Preview ----------
 with left_col:
@@ -136,5 +136,5 @@ with right_col:
                 st.warning("⚠️ Could not extract white area features.")
         else:
             st.warning("⚠️ Please upload a QR code image first.")
-
+    
     st.markdown("</div>", unsafe_allow_html=True)
