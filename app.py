@@ -13,7 +13,7 @@ model = load("rf_white_features.pkl")
 # Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Centered Header (keep as is)
+# CSS for styling
 st.markdown("""
     <style>
     .header-container {
@@ -32,26 +32,19 @@ st.markdown("""
         text-align: center;
         margin-top: 0;
     }
-    </style>
-    <div class="header-container">
-        <h1>QR Code Authenticity Validator</h1>
-        <p>Distinguish between Original vs Recaptured QR codes</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Result card styles
-st.markdown("""
-    <style>
     .result-card {
-        padding: 1.2rem;
-        border-radius: 14px;
+        padding: 0.7rem;
+        border-radius: 12px;
         color: white;
         font-weight: bold;
         text-align: center;
-        font-size: 1.3rem;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        font-size: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
         margin-top: 1rem;
-        border: 3px solid;
+        border: 2px solid;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
     }
     .original {
         background-color: #2e7d32;
@@ -61,10 +54,24 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
+    .center-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# Helper to get base64 from image
+# Title
+st.markdown("""
+    <div class="header-container">
+        <h1>QR Code Authenticity Validator</h1>
+        <p>Distinguish between Original vs Recaptured QR codes</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# Helper to encode image to base64
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
@@ -74,29 +81,29 @@ def get_image_base64(pil_img):
 # Two-pane layout
 left_col, right_col = st.columns([1, 1.2])
 
-# Left: Upload + display
+# Left: Upload and display
 with left_col:
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
-        resized.thumbnail((300, 300))  # Resize to max 300x300
+        resized.thumbnail((380, 380))
         img_base64 = get_image_base64(resized)
         st.markdown(
-    f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/></div>",
-    unsafe_allow_html=True
-)
+            f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/></div>",
+            unsafe_allow_html=True
+        )
 
 # Right: Verify button + result
 with right_col:
     if uploaded_file:
-        verify_button = st.button("🔍 Verify QR")
+        st.markdown("<div class='center-button'>", unsafe_allow_html=True)
+        verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
+        st.markdown("</div>", unsafe_allow_html=True)
 
         if verify_button:
-            image_pil = Image.open(uploaded_file).convert("RGB")
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-
             features = extract_white_area_features(image_cv2)
 
             if features is not None:
@@ -109,7 +116,7 @@ with right_col:
                 st.markdown(f"""
                     <div class='result-card {card_class}'>
                         {label}<br/>
-                        <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
+                        <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
                     </div>
                 """, unsafe_allow_html=True)
             else:
