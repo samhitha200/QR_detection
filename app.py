@@ -10,37 +10,34 @@ import base64
 # Load model
 model = load("rf_white_features.pkl")
 
-# Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# CSS styling
+# CSS Styling
 st.markdown("""
     <style>
     .header-container {
         padding-top: 0.2rem;
-        margin-bottom: -1rem;
+        margin-bottom: 1rem;
     }
     .header-container h1 {
         font-size: 1.5rem;
         color: var(--text-color);  
-        margin-bottom: 0.2rem;
         text-align: center;
     }
     .header-container p {
         font-size: 0.9rem;
         color: var(--text-color);  
         text-align: center;
-        margin-top: 0;
     }
     .result-card {
-        padding: 0.7rem;
+        padding: 1rem;
         border-radius: 12px;
         color: var(--text-color); 
         font-weight: bold;
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 2.5rem;  /* More space added here */
+        margin-top: 3rem;
         border: 2px solid;
         width: 60%;
         margin-left: auto;
@@ -54,22 +51,21 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    .verify-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 200px;
-    }
     .separator {
-        border-left: 2px solid #555;
-        height: 100%;
-        margin: 0 1rem;
+        border-left: 2px solid #666;
+        height: 500px;
+        margin: auto;
     }
-    button[kind="secondary"] {
-        font-size: 1.2rem !important;
-        padding: 0.8rem 2rem !important;
-        border-radius: 8px !important;
+    .center-verify {
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    .stButton>button {
+        font-size: 18px !important;
+        padding: 0.75rem 2rem !important;
         border: 2px solid #ef5350 !important;
+        border-radius: 8px !important;
         background-color: #1e1e1e !important;
         color: white !important;
     }
@@ -84,17 +80,16 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Helper to encode image to base64
+# Helper: Image to base64
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
-    byte_im = buf.getvalue()
-    return base64.b64encode(byte_im).decode()
+    return base64.b64encode(buf.getvalue()).decode()
 
-# Layout with separator
-left_col, spacer, right_col = st.columns([0.45, 0.02, 0.53])
+# Layout
+left_col, mid_col, right_col = st.columns([0.59, 0.02, 0.44])
 
-# Left: Upload and preview
+# Upload and preview (Left)
 with left_col:
     uploaded_file = st.file_uploader("Upload a QR Code image", type=["jpg", "jpeg", "png"])
     image_pil = None
@@ -108,15 +103,15 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Vertical line separator
-with spacer:
+# Middle Column - Separator
+with mid_col:
     st.markdown("<div class='separator'></div>", unsafe_allow_html=True)
 
-# Right: Button and Results
+# Right Column - Centered Verify Button and Result
 with right_col:
-    st.markdown('<div class="verify-container">', unsafe_allow_html=True)
-    verify_clicked = st.button("🔍 Verify QR", key="verify_button_centered")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("<div class='center-right-panel'>", unsafe_allow_html=True)
+    verify_clicked = st.button("🔍 Verify QR", key="verify_button")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if verify_clicked:
         if image_pil is not None:
@@ -130,14 +125,14 @@ with right_col:
                 label = "Original" if prediction == 0 else "Recaptured"
                 confidence = np.max(proba) * 100
 
-                card_class = "original" if label == "Original" else "recaptured"
-                st.markdown(f"""
-                    <div class='result-card {card_class}'>
-                        {label}<br/>
-                        <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
-                    </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.warning("⚠️ Could not extract white area features.")
+            card_class = "original" if label == "Original" else "recaptured"
+            st.markdown(f"""
+                <div class='result-card {card_class}'>
+                    {label}<br/>
+                    <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
+                </div>
+            """, unsafe_allow_html=True)
         else:
-            st.warning("⚠️ Please upload a QR code image first.")
+            st.warning("⚠️ Could not extract white area features.")
+    else:
+        st.warning("⚠️ Please upload a QR code image first.")
