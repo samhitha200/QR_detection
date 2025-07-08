@@ -13,7 +13,7 @@ model = load("rf_white_features.pkl")
 # Configure Streamlit page
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Header styling at top-up middle
+# Centered, white-colored, smaller header
 st.markdown("""
     <style>
     .header-container {
@@ -22,13 +22,13 @@ st.markdown("""
     }
     .header-container h1 {
         font-size: 1.5rem;
-        color: #222;
+        color: white;
         margin-bottom: 0.2rem;
         text-align: center;
     }
     .header-container p {
         font-size: 0.9rem;
-        color: #666;
+        color: white;
         text-align: center;
         margin-top: 0;
     }
@@ -38,6 +38,7 @@ st.markdown("""
         <p>Distinguish between Original vs Recaptured QR codes</p>
     </div>
 """, unsafe_allow_html=True)
+
 
 # Helper to convert image to base64 for display
 def get_image_base64(pil_img):
