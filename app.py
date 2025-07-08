@@ -17,12 +17,10 @@ st.caption("Distinguish between Original vs Recaptured QR codes")
 uploaded_file = st.file_uploader("Upload a QR Code image (.jpg/.jpeg/.png)", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
-    # Read image using PIL and convert to OpenCV format
     image_pil = Image.open(uploaded_file).convert("RGB")
     image = np.array(image_pil)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    # Extract features
     features = extract_white_area_features(image)
 
     if features is not None:
@@ -31,11 +29,11 @@ if uploaded_file:
         label = "Original" if prediction == 0 else "Recaptured"
         confidence = np.max(proba) * 100
 
-        # Two-column layout
-        col1, col2 = st.columns(2)
+        # Two-column compact layout
+        col1, col2 = st.columns([1, 1])  # Equal width
 
         with col1:
-            st.image(image, channels="BGR", caption="Uploaded QR Code", use_column_width=True)
+            st.image(image, channels="BGR", caption="Uploaded QR Code", use_container_width=True)
 
         with col2:
             st.markdown("### Prediction")
