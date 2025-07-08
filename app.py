@@ -54,6 +54,12 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
+    .center-button {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        height: 100px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -89,16 +95,11 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Right: Always show the Verify button
+# Right: Centered Verify button (same level as uploader) + results
 with right_col:
-    st.markdown("<br><br>", unsafe_allow_html=True)  # spacing to match left side
-
-    # Centered container
-    st.markdown("""
-        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-    """, unsafe_allow_html=True)
-
+    st.markdown('<div class="center-button">', unsafe_allow_html=True)
     verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if verify_button:
         if image_pil is not None:
@@ -123,6 +124,3 @@ with right_col:
                 st.warning("⚠️ Could not extract white area features.")
         else:
             st.warning("⚠️ Please upload a QR code image first.")
-
-    # Close centered container
-    st.markdown("</div>", unsafe_allow_html=True)
