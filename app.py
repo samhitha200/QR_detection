@@ -87,7 +87,7 @@ with left_col:
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
-        resized.thumbnail((380, 380))
+        resized.thumbnail((400, 400))
         img_base64 = get_image_base64(resized)
         st.markdown(
             f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' style='border-radius: 10px;'/></div>",
@@ -97,16 +97,14 @@ with left_col:
 # Right: Verify button + result
 with right_col:
     if uploaded_file:
-        with st.form(key="verify_form"):
-            st.markdown("<div class='center-button'>", unsafe_allow_html=True)
-            submitted = st.form_submit_button(label="🔍 Verify QR")
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            if uploaded_file and submitted:
+        st.markdown("<div class='center-button'>", unsafe_allow_html=True)
+        verify_button = st.button("🔍 Verify QR", key="verify_button_centered")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        if verify_button:
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             features = extract_white_area_features(image_cv2)
-            
 
             if features is not None:
                 prediction = model.predict([features])[0]
