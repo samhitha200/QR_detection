@@ -150,7 +150,7 @@ with col_right:
                 <div style='font-size: 2rem; text-transform: uppercase; letter-spacing: 1px;'>
                 {label}
                 </div>
-                <div style='font-size: 0.85rem; margin-top: 6px; font-weight: normal;'>
+                <div style='font-size: 1 rem; margin-top: 6px; font-weight: normal;'>
             Confidence: {confidence:.2f}%
         </div>
     </div>
