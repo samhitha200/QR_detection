@@ -107,8 +107,12 @@ with col_left:
         img_base64 = get_image_base64(resized)
 
         st.markdown(
-            f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' "
-            f"style='border-radius: 10px; max-width: 100%; height: auto;'/></div>",
+           f"""
+            <div style='text-align: center; padding: 10px;'>
+                <img src='data:image/jpeg;base64,{img_base64}'
+                    style='border-radius: 10px; max-width: 300px; height: auto;' />
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
