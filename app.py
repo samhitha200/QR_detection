@@ -15,6 +15,9 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
 st.markdown("""
     <style>
+    html, body, [data-testid="stAppViewContainer"] {
+        overflow-y: hidden !important;
+    }
     .header-container {
         padding-top: 0.5rem;
         margin-bottom: 1rem;
