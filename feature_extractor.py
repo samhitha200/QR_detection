@@ -33,4 +33,15 @@ def extract_white_area_features(image):
     entropy_val = shannon_entropy(white_pixels)
     features.append(entropy_val)
 
+    laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
+    features.append(laplacian_var)                  # 17
+
+    # Screen pattern detection using FFT energy
+    f = np.fft.fft2(gray)
+    fshift = np.fft.fftshift(f)
+    magnitude_spectrum = 20 * np.log(np.abs(fshift) + 1)
+    high_freq_energy = np.mean(magnitude_spectrum[gray.shape[0]//4: 3*gray.shape[0]//4,
+                                                  gray.shape[1]//4: 3*gray.shape[1]//4])
+    features.append(high_freq_energy) 
+    
     return np.array(features)
