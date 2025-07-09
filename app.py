@@ -68,10 +68,10 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Main layout
-col_left, col_divider, col_right = st.columns([0.45, 0.02, 0.53])
+# --- Main 2-panel layout ---
+col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
 
-# LEFT: Upload and Preview
+# --- LEFT: Upload + Preview ---
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
@@ -85,17 +85,17 @@ with col_left:
             unsafe_allow_html=True
         )
 
-# DIVIDER
+# --- MIDDLE DIVIDER ---
 with col_divider:
     st.markdown(
         """<div style="height: 100%; width: 2px; background-color: #999; margin: 0 auto;"></div>""",
         unsafe_allow_html=True
     )
 
-# RIGHT: Button aligned with uploader, and result below
+# --- RIGHT: Button + Result ---
 with col_right:
     if uploaded_file:
-        # Button aligned to match upload box
+        # Button aligned with uploader box
         st.markdown("""
             <div style='margin-top: 38px; text-align: center;'>
                 <button style='
@@ -110,7 +110,7 @@ with col_right:
             </div>
         """, unsafe_allow_html=True)
 
-        # Hidden real Streamlit button
+        # Hidden functional Streamlit button
         verify_clicked = st.button("Verify QR", key="verify-button")
 
         if verify_clicked:
