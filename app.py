@@ -32,23 +32,22 @@ st.markdown("""
         background-color: #888;
         margin: 0 auto;
     }
-    .button-align {
+   .button-align {
     display: flex;
-    justify-content: flex-end;  /* ⬅️ align to the right */
-    align-items: center;
+    justify-content: center;   /* ⬅️ Center horizontally */
+    align-items: center;       /* ⬅️ Center vertically */
     margin-top: 42px;
-    width: 100%;
-    padding-right: 20px;  /* Optional spacing from the right edge */
-    }
-.stButton>button {
-    font-size: 18px !important;
-    padding: 10px 24px !important;
-    border: 2px solid #e74c3c !important;
-    color: #e74c3c !important;
-    background-color: transparent !important;
-    border-radius: 8px !important;
-}
+    width: 100%
 
+    }
+    .stButton>button {
+        font-size: 18px !important;
+        padding: 10px 24px !important;
+        border: 2px solid #e74c3c !important;
+        color: #e74c3c !important;
+        background-color: transparent !important;
+        border-radius: 8px !important;
+    }
     .result-card {
         padding: 0.7rem;
         border-radius: 12px;
@@ -57,11 +56,9 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 2rem;
+        margin-top: 1.5rem;
         border: 2px solid;
-        width: 60%;
-        margin-left: auto;
-        margin-right: auto;
+        width: 100%;
     }
     .original {
         background-color: #2e7d32;
@@ -73,6 +70,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 
 # Header
