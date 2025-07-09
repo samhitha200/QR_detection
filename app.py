@@ -110,9 +110,9 @@ with col_divider:
 with col_right:
     if image_pil:
         # Use internal columns to center the button manually
-        col_a, col_btn, col_b = st.columns([0.22, 0.4, 0.38])
+        col_a, col_btn, col_b = st.columns([0.6, 0.5, 0.38])
         with col_btn:
-            st.markdown("<div style='margin-top: 35px;'>", unsafe_allow_html=True)  # increase margin-top
+            st.markdown("<div style='margin-top: 40px;'>", unsafe_allow_html=True)  # increase margin-top
             verify_clicked = st.button("🔍 Verify QR", key="verify_button")
             st.markdown("</div>", unsafe_allow_html=True)
 
