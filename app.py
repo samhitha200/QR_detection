@@ -77,11 +77,12 @@ with top_left:
 with top_right:
     verify_clicked = st.button("🔍 Verify QR", use_container_width=True)
 
-# Image + Result row
-bottom_left, bottom_right = st.columns([0.6, 0.4])
+# Define layout with a visible vertical divider between left and right
+col_left, col_divider, col_right = st.columns([0.45, 0.02, 0.53])
 
-# Left: Display Image
-with bottom_left:
+# --- LEFT PANEL: Upload + Preview ---
+with col_left:
+    uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
@@ -93,25 +94,57 @@ with bottom_left:
             unsafe_allow_html=True
         )
 
-# Right: Result card
-with bottom_right:
-    if uploaded_file and verify_clicked:
-        image_np = np.array(image_pil)
-        image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-        features = extract_white_area_features(image_cv2)
+# --- VISIBLE DIVIDER ---
+with col_divider:
+    st.markdown(
+        """
+        <div style="height: 100%; width: 2px; background-color: #999; margin: 0 auto;"></div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        if features is not None:
-            prediction = model.predict([features])[0]
-            proba = model.predict_proba([features])[0]
-            label = "Original" if prediction == 0 else "Recaptured"
-            confidence = np.max(proba) * 100
+# --- RIGHT PANEL: Button + Result ---
+with col_right:
+    if uploaded_file:
+        st.markdown("###")  # Spacer
 
-            card_class = "original" if label == "Original" else "recaptured"
-            st.markdown(f"""
-                <div class='result-card {card_class}'>
-                    {label}<br/>
-                    <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.warning("⚠️ Could not extract white area features.")
+        # Centered custom HTML button (styled)
+        st.markdown("""
+            <div style='text-align: center; margin-top: 30px;'>
+                <button style='
+                    font-size: 18px;
+                    padding: 10px 30px;
+                    border: 2px solid #e74c3c;
+                    background-color: transparent;
+                    color: #e74c3c;
+                    border-radius: 8px;
+                    cursor: pointer;
+                ' onclick="document.getElementById('verify-button').click()">🔍 Verify QR</button>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Hidden Streamlit button (used to trigger backend)
+        verify_clicked = st.button("Verify QR", key="verify-button")
+
+        if verify_clicked:
+            image_np = np.array(image_pil)
+            image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+            features = extract_white_area_features(image_cv2)
+
+            if features is not None:
+                prediction = model.predict([features])[0]
+                proba = model.predict_proba([features])[0]
+                label = "Original" if prediction == 0 else "Recaptured"
+                confidence = np.max(proba) * 100
+
+                card_class = "original" if label == "Original" else "recaptured"
+
+                # Result card pushed down with margin
+                st.markdown(f"""
+                    <div class='result-card {card_class}' style='margin-top: 40px !important;'>
+                        {label}<br/>
+                        <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
+                    </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.warning("⚠️ Could not extract white area features.")
