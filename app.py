@@ -50,10 +50,10 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 100px;
+        margin-top: 150px;
         border: 2px solid;
         width: 60%;
-        margin-left: 150px;
+        margin-left: 160px;
         margin-right: auto;
     }
     .original {
