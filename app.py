@@ -10,10 +10,9 @@ import base64
 # Load model
 model = load("rf_white_features.pkl")
 
-# Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# CSS Styling
+# Custom CSS
 st.markdown("""
     <style>
     .header-container {
@@ -53,26 +52,27 @@ st.markdown("""
     .divider-line {
         height: 100%;
         width: 2px;
-        background-color: #999;
+        background-color: #888;
         margin: 0 auto;
     }
-    .centered-button {
+    .center-btn-container {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         margin-top: 38px;
+        margin-left: 150px; /* shift button right manually */
     }
     .stButton>button {
-        font-size: 16px;
-        padding: 10px 30px;
-        border-radius: 8px;
-        background-color: #1f77b4;
-        color: white;
-        border: none;
+        font-size: 20px !important;
+        padding: 15px 30px !important;
+        background-color: #1a73e8 !important;
+        color: none !important;
+        border: none !important;
+        border-radius: 8px !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Title
+# Header
 st.markdown("""
     <div class="header-container">
         <h1>QR Code Authenticity Validator</h1>
@@ -80,27 +80,26 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Helper to encode image to base64
+# Image to base64
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# --- Layout
+# Layout
 col_left, col_divider, col_right = st.columns([0.53, 0.01, 0.46])
 
-# Variables
 image_pil = None
 verify_clicked = False
 
-# LEFT PANEL: Upload and preview
+# LEFT
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
-        resized.thumbnail((500, 500))
+        resized.thumbnail((400, 400))
         img_base64 = get_image_base64(resized)
         st.markdown(
             f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' "
@@ -108,14 +107,14 @@ with col_left:
             unsafe_allow_html=True
         )
 
-# VISIBLE DIVIDER
+# DIVIDER
 with col_divider:
     st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
 
-# RIGHT PANEL: Button and result
+# RIGHT
 with col_right:
     if image_pil:
-        st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
+        st.markdown("<div class='center-btn-container'>", unsafe_allow_html=True)
         verify_clicked = st.button("🔍 Verify QR", key="verify_button")
         st.markdown("</div>", unsafe_allow_html=True)
 
