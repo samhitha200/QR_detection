@@ -70,7 +70,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 40px;
+        margin-top: 70px;
         border: 2px solid;
         width: 60%;
         margin-left: 160px;
@@ -129,7 +129,7 @@ with col_left:
 with col_divider:
     st.markdown("""
         <div style="
-            height: 100vh;
+            height: 70vh;
             width: 2px;
             margin: 0 auto;
             background-color: #999;
