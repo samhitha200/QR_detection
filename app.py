@@ -15,8 +15,18 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"] {
+     /* Hide vertical scrollbar in main app */
+    section.main > div {
         overflow-y: hidden !important;
+    }
+
+    /* Optional: Hide scrollbar styles for browsers */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    body {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
     .header-container {
         padding-top: 0.5rem;
