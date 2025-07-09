@@ -12,6 +12,7 @@ model = load("rf_white_features.pkl")
 
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
+# CSS Styling
 st.markdown("""
     <style>
     .header-container {
@@ -31,22 +32,6 @@ st.markdown("""
         width: 2px;
         background-color: #888;
         margin: 0 auto;
-    }
-   .button-align {
-    display: flex;
-    justify-content: center;   /* ⬅️ Center horizontally */
-    align-items: center;       /* ⬅️ Center vertically */
-    margin-top: 42px;
-    width: 100%
-
-    }
-    .stButton>button {
-        font-size: 18px !important;
-        padding: 10px 24px !important;
-        border: 2px solid #e74c3c !important;
-        color: #e74c3c !important;
-        background-color: transparent !important;
-        border-radius: 8px !important;
     }
     .result-card {
         padding: 0.7rem;
@@ -71,8 +56,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
-
 # Header
 st.markdown("""
     <div class="header-container">
@@ -81,13 +64,14 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Image to base64
+# Image to base64 utility
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
+# Layout: Left (Upload) | Divider | Right (Verify & Result)
 col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
 
 # LEFT PANEL
@@ -98,11 +82,7 @@ with col_left:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
         resized.thumbnail((500, 500))
-        from io import BytesIO
-        import base64
-        buf = BytesIO()
-        resized.save(buf, format="JPEG")
-        img_b64 = base64.b64encode(buf.getvalue()).decode()
+        img_b64 = get_image_base64(resized)
         st.markdown(f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_b64}' style='max-width: 100%; border-radius: 8px;'/></div>", unsafe_allow_html=True)
 
 # DIVIDER
@@ -111,13 +91,13 @@ with col_divider:
 
 # RIGHT PANEL
 with col_right:
-    st.markdown("<div class='button-align'>", unsafe_allow_html=True)
-    verify_clicked = st.button("🔍 Verify QR", key="verify_button")
-    st.markdown("</div>", unsafe_allow_html=True)
+    if uploaded_file:
+        verify_clicked = st.button("🔍 Verify QR", key="verify_button")
+    else:
+        st.info("⬆️ Upload a QR Code image to enable the Verify button.")
+        verify_clicked = False
 
-# Processing after button click
-if verify_clicked:
-    if image_pil is not None:
+    if verify_clicked and image_pil is not None:
         image_np = np.array(image_pil)
         image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
         features = extract_white_area_features(image_cv2)
@@ -128,13 +108,27 @@ if verify_clicked:
             label = "Original" if prediction == 0 else "Recaptured"
             confidence = np.max(proba) * 100
             card_class = "original" if label == "Original" else "recaptured"
+
             st.markdown(f"""
-                <div class='result-card {card_class}'>
-                    {label}<br/>
-                    <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
+                <div style='display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 30px;'>
+                    <button style="
+                        font-size: 18px;
+                        padding: 10px 24px;
+                        border: 2px solid #e74c3c;
+                        color: #e74c3c;
+                        background-color: transparent;
+                        border-radius: 8px;
+                        cursor: not-allowed;
+                        margin-bottom: 1.2rem;
+                    " disabled>🔍 Verify QR</button>
+
+                    <div class='result-card {card_class}'>
+                        {label}<br/>
+                        <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
         else:
             st.warning("⚠️ Could not extract white area features.")
-    else:
+    elif verify_clicked:
         st.warning("⚠️ Please upload an image first.")
