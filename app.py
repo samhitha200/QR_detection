@@ -56,6 +56,19 @@ st.markdown("""
         background-color: #999;
         margin: 0 auto;
     }
+    .centered-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 38px;
+    }
+    .stButton>button {
+        font-size: 16px;
+        padding: 10px 30px;
+        border-radius: 8px;
+        background-color: #1f77b4;
+        color: white;
+        border: none;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -67,17 +80,21 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Helper
+# Helper to encode image to base64
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# ---- Main layout
+# --- Layout
 col_left, col_divider, col_right = st.columns([0.53, 0.01, 0.46])
 
-# ---- LEFT PANEL
+# Variables
+image_pil = None
+verify_clicked = False
+
+# LEFT PANEL: Upload and preview
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
@@ -91,32 +108,16 @@ with col_left:
             unsafe_allow_html=True
         )
 
-# ---- DIVIDER
+# VISIBLE DIVIDER
 with col_divider:
     st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
 
-# ---- RIGHT PANEL (aligned verify button)
+# RIGHT PANEL: Button and result
 with col_right:
-    if uploaded_file:
-        # Create inline block container for alignment
-        st.markdown(
-            """
-            <div style="display: flex; justify-content: center; padding-top: 12px;">
-                <button onclick="document.getElementById('verify-btn-hidden').click()" style="
-                    font-size: 16px;
-                    padding: 10px 28px;
-                    border-radius: 6px;
-                    background-color: #1f77b4;
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                ">🔍 Verify QR</button>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        # Hidden Streamlit button to handle logic
-        verify_clicked = st.button("Verify QR", key="verify-btn-hidden")
+    if image_pil:
+        st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
+        verify_clicked = st.button("🔍 Verify QR", key="verify_button")
+        st.markdown("</div>", unsafe_allow_html=True)
 
         if verify_clicked:
             image_np = np.array(image_pil)
