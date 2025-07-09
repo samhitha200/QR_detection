@@ -85,7 +85,7 @@ with col_left:
         img_base64 = get_image_base64(resized)
         st.markdown(
             f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' "
-            f"style='border-radius: 10px; max-width: 100%; height: auto;'/></div>",
+            f"style='border-radius: 10px; max-width: 100%; height: auto; margin-top: 15px;'/></div>",
             unsafe_allow_html=True
         )
 
@@ -98,17 +98,16 @@ with col_divider:
 
 # --- RIGHT: Centered Button + Result ---
 with col_right:
-    if image_pil is not None:
-        # Match uploader height
-        st.markdown("<div style='height: 92px;'></div>", unsafe_allow_html=True)
+    if image_pil:
+        # Match vertical height of uploader box visually
+        st.markdown("<div style='height: 72px;'></div>", unsafe_allow_html=True)
 
-        # Center the button
-        center_button = st.container()
-        with center_button:
-            st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-            verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
-            st.markdown("</div>", unsafe_allow_html=True)
+        # Centered button
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
+        st.markdown("</div>", unsafe_allow_html=True)
 
+        # Result block
         if verify_clicked:
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
