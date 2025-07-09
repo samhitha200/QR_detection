@@ -1,8 +1,8 @@
 import streamlit as st
 import numpy as np
 import cv2
-from joblib import load
 from PIL import Image
+from joblib import load
 from feature_extractor import extract_white_area_features
 from io import BytesIO
 import base64
@@ -10,8 +10,10 @@ import base64
 # Load model
 model = load("rf_white_features.pkl")
 
+# Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
+# Custom CSS
 st.markdown("""
     <style>
     .header-container {
@@ -32,15 +34,6 @@ st.markdown("""
         background-color: #888;
         margin: 0 auto;
     }
-   .button-align {
-        width: 100%;
-        display: flex;
-        justify-content: flex-start;
-        margin-top: 42px;
-    }
-    .button-wrapper {
-        margin-left: 180px; /* try increasing this to 250px, 300px */
-    }
     .stButton>button {
         font-size: 18px !important;
         padding: 10px 24px !important;
@@ -55,9 +48,9 @@ st.markdown("""
         color: white;
         font-weight: bold;
         text-align: center;
-        font-size: 2.5rem;
+        font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 5 rem;
+        margin-top: 2rem;
         border: 2px solid;
         width: 60%;
         margin-left: auto;
@@ -74,8 +67,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
-# Header
+# Title
 st.markdown("""
     <div class="header-container">
         <h1>QR Code Authenticity Validator</h1>
@@ -83,47 +75,46 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Image to base64 utility
+# Base64 encoder for image preview
 def get_image_base64(pil_img):
     buf = BytesIO()
     pil_img.save(buf, format="JPEG")
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
+# 3 Column Layout: Left | Divider | Right
 col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
 
-# LEFT PANEL
+image_pil = None
+
+# --- LEFT PANEL: Upload and Display ---
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
-    image_pil = None
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
         resized.thumbnail((500, 500))
-        from io import BytesIO
-        import base64
-        buf = BytesIO()
-        resized.save(buf, format="JPEG")
-        img_b64 = base64.b64encode(buf.getvalue()).decode()
-        st.markdown(f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_b64}' style='max-width: 100%; border-radius: 8px;'/></div>", unsafe_allow_html=True)
+        img_base64 = get_image_base64(resized)
 
-# DIVIDER
+        st.markdown(
+            f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' "
+            f"style='border-radius: 10px; max-width: 100%; height: auto;'/></div>",
+            unsafe_allow_html=True
+        )
+
+# --- Divider Line ---
 with col_divider:
     st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
 
-# RIGHT PANEL
+# --- RIGHT PANEL: Centered Button & Result ---
 with col_right:
-    if uploaded_file:
-        st.markdown("<div class='button-align'><div class='button-wrapper'>", unsafe_allow_html=True)
-        verify_clicked= st.button("🔍 Verify QR", key="verify_button")
-        st.markdown("</div></div>", unsafe_allow_html=True)
+    if image_pil:
+        # Use internal columns to center the button manually
+        col_a, col_btn, col_b = st.columns([0.25, 0.5, 0.25])
+        with col_btn:
+            verify_clicked = st.button("🔍 Verify QR", key="verify_button")
 
         if verify_clicked:
-            import numpy as np
-            import cv2
-            from feature_extractor import extract_white_area_features
-            from joblib import load
-            model = load("rf_white_features.pkl")
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             features = extract_white_area_features(image_cv2)
@@ -134,6 +125,7 @@ with col_right:
                 label = "Original" if prediction == 0 else "Recaptured"
                 confidence = np.max(proba) * 100
                 card_class = "original" if label == "Original" else "recaptured"
+
                 st.markdown(f"""
                     <div class='result-card {card_class}'>
                         {label}<br/>
