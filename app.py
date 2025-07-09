@@ -64,19 +64,18 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    /* Default (light mode) */
     .divider-line {
         height: 100vh;
         width: 2px;
-        background-color: #444;  /* dark line for light background */
+        background-color: black;
         margin: 0 auto;
         opacity: 0.8;
     }
 
-/* Override for dark mode */
+/* Override for dark mode (white line) */
 @media (prefers-color-scheme: dark) {
     .divider-line {
-        background-color: #eee;  /* light line for dark background */
+        background-color: white;
     }
 }
     </style>
