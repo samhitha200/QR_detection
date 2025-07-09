@@ -146,9 +146,13 @@ with col_right:
                 card_class = "original" if label == "Original" else "recaptured"
 
                 st.markdown(f"""
-    <div class='result-card {card_class}'>
-        <div style='font-size: 1.8rem; text-transform: uppercase;'>{label}</div>
-        <div style='font-size: 0.85rem; margin-top: 6px;'>Confidence: {confidence:.2f}%</div>
+                <div class='result-card {card_class}'>
+                <div style='font-size: 2rem; text-transform: uppercase; letter-spacing: 1px;'>
+                {label}
+                </div>
+                <div style='font-size: 0.85rem; margin-top: 6px; font-weight: normal;'>
+            Confidence: {confidence:.2f}%
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
