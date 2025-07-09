@@ -15,19 +15,15 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
 st.markdown("""
     <style>
-     /* Hide vertical scrollbar in main app */
-    section.main > div {
-        overflow-y: hidden !important;
+     html, body, [data-testid="stAppViewContainer"], [data-testid="stVerticalBlock"] {
+        overflow: hidden !important;
     }
 
-    /* Optional: Hide scrollbar styles for browsers */
     ::-webkit-scrollbar {
-        display: none;
+        width: 0px;
+        background: transparent; /* optional */
     }
-    body {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
+
     .header-container {
         padding-top: 0.5rem;
         margin-bottom: 1rem;
@@ -43,7 +39,7 @@ st.markdown("""
 
     /* Adaptive Divider Line */
     .divider-line {
-        height: 100vh;
+        height: 100%;
         width: 2px;
         background-color: black; /* visible in light theme */
         margin: 0 auto;
@@ -73,7 +69,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 150px;
+        margin-top: 50px;
         border: 2px solid;
         width: 60%;
         margin-left: 160px;
