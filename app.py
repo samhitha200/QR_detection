@@ -103,10 +103,19 @@ with left_col:
 with divider_col:
     st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
 
-# Right Panel: Centered content
+# Right Panel with visual separator and centered content
 with right_col:
     if uploaded_file:
-        st.markdown("<div class='right-panel-content'>", unsafe_allow_html=True)
+        st.markdown("""
+            <div style="
+                border-left: 1px solid #666;
+                padding-left: 30px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            ">
+        """, unsafe_allow_html=True)
 
         verify_button = st.button("🔍 Verify QR")
 
