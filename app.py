@@ -12,7 +12,6 @@ model = load("rf_white_features.pkl")
 
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Custom CSS
 st.markdown("""
     <style>
     .header-container {
@@ -26,6 +25,27 @@ st.markdown("""
     .header-container p {
         font-size: 0.9rem;
         text-align: center;
+    }
+    .divider-line {
+        height: 100%;
+        width: 2px;
+        background-color: #888;
+        margin: 0 auto;
+    }
+    .button-align {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 42px;
+        width: 100%;
+    }
+    .stButton>button {
+        font-size: 18px !important;
+        padding: 10px 24px !important;
+        border: 2px solid #e74c3c !important;
+        color: #e74c3c !important;
+        background-color: transparent !important;
+        border-radius: 8px !important;
     }
     .result-card {
         padding: 0.7rem;
@@ -49,28 +69,9 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    .divider-line {
-        height: 100%;
-        width: 2px;
-        background-color: #888;
-        margin: 0 auto;
-    }
-    .center-btn-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 38px;
-    }
-    .stButton>button {
-        font-size: 18px !important;
-        padding: 12px 28px !important;
-        border: 2px solid #e74c3c !important;
-        color: #e74c3c !important;
-        background-color: transparent !important;
-        border-radius: 8px !important;
-        cursor: pointer;
-    }
     </style>
 """, unsafe_allow_html=True)
+
 
 # Header
 st.markdown("""
@@ -87,38 +88,40 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Layout
-col_left, col_divider, col_right = st.columns([0.53, 0.01, 0.46])
+col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
 
-image_pil = None
-verify_clicked = False
-
-# LEFT
+# LEFT PANEL
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
+    image_pil = None
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
-        resized.thumbnail((400, 400))
-        img_base64 = get_image_base64(resized)
-        st.markdown(
-            f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' "
-            f"style='border-radius: 10px; max-width: 100%; height: auto;'/></div>",
-            unsafe_allow_html=True
-        )
+        resized.thumbnail((500, 500))
+        from io import BytesIO
+        import base64
+        buf = BytesIO()
+        resized.save(buf, format="JPEG")
+        img_b64 = base64.b64encode(buf.getvalue()).decode()
+        st.markdown(f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_b64}' style='max-width: 100%; border-radius: 8px;'/></div>", unsafe_allow_html=True)
 
 # DIVIDER
 with col_divider:
     st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
 
-# RIGHT
+# RIGHT PANEL
 with col_right:
-    if image_pil:
-        st.markdown("<div class='center-btn-container'>", unsafe_allow_html=True)
+    if uploaded_file:
+        st.markdown("<div class='button-align'>", unsafe_allow_html=True)
         verify_clicked = st.button("🔍 Verify QR", key="verify_button")
         st.markdown("</div>", unsafe_allow_html=True)
 
         if verify_clicked:
+            import numpy as np
+            import cv2
+            from feature_extractor import extract_white_area_features
+            from joblib import load
+            model = load("rf_white_features.pkl")
             image_np = np.array(image_pil)
             image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             features = extract_white_area_features(image_cv2)
@@ -129,9 +132,8 @@ with col_right:
                 label = "Original" if prediction == 0 else "Recaptured"
                 confidence = np.max(proba) * 100
                 card_class = "original" if label == "Original" else "recaptured"
-
                 st.markdown(f"""
-                    <div class='result-card {card_class}' style='margin-top: 50px;'>
+                    <div class='result-card {card_class}'>
                         {label}<br/>
                         <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
                     </div>
