@@ -103,7 +103,7 @@ with col_left:
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
-        resized.thumbnail((500, 500))
+        resized.thumbnail((300, 300))
         img_base64 = get_image_base64(resized)
 
         st.markdown(
