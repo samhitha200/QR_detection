@@ -70,7 +70,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 70px;
+        margin-top: 30px;
         border: 2px solid;
         width: 60%;
         margin-left: 160px;
