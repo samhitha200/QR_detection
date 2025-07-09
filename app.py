@@ -15,13 +15,14 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
 st.markdown("""
     <style>
-     html, body, [data-testid="stAppViewContainer"], [data-testid="stVerticalBlock"] {
+    /* Hide all scrollbars */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stVerticalBlock"] {
         overflow: hidden !important;
     }
 
     ::-webkit-scrollbar {
         width: 0px;
-        background: transparent; /* optional */
+        background: transparent;
     }
 
     .header-container {
@@ -39,7 +40,7 @@ st.markdown("""
 
     /* Adaptive Divider Line */
     .divider-line {
-        height: 100%;
+        height: 60vh;
         width: 2px;
         background-color: black; /* visible in light theme */
         margin: 0 auto;
@@ -69,7 +70,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 50px;
+        margin-top: 40px;
         border: 2px solid;
         width: 60%;
         margin-left: 160px;
