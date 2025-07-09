@@ -37,7 +37,7 @@ st.markdown("""
          justify-content: flex-start;
          align-items: center;
          margin-top: 42px;
-         margin-left: calc(100% - 24cm);
+         margin-left: 200px;
     }
     .stButton>button {
         font-size: 18px !important;
