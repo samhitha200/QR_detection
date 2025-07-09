@@ -112,19 +112,16 @@ with col_left:
             unsafe_allow_html=True
         )
 
-# --- Divider Line ---
 with col_divider:
-    with col_divider:
     st.markdown("""
         <div style="
             height: 100vh;
             width: 2px;
             margin: 0 auto;
-            background-color: black;
+            background-color: #999;
             opacity: 0.8;
         "></div>
     """, unsafe_allow_html=True)
-
 
 # --- RIGHT PANEL: Centered Button & Result ---
 with col_right:
