@@ -36,7 +36,7 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 1.5rem;
+        margin-top: 2rem;
         border: 2px solid;
         width: 60%;
         margin-left: auto;
@@ -68,19 +68,10 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Upload + Button aligned row
-top_left, top_right = st.columns([0.6, 0.4])
-
-with top_left:
-    uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
-
-with top_right:
-    verify_clicked = st.button("🔍 Verify QR", use_container_width=True)
-
-# Define layout with a visible vertical divider between left and right
+# Main layout
 col_left, col_divider, col_right = st.columns([0.45, 0.02, 0.53])
 
-# --- LEFT PANEL: Upload + Preview ---
+# LEFT: Upload and Preview
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
@@ -94,23 +85,19 @@ with col_left:
             unsafe_allow_html=True
         )
 
-# --- VISIBLE DIVIDER ---
+# DIVIDER
 with col_divider:
     st.markdown(
-        """
-        <div style="height: 100%; width: 2px; background-color: #999; margin: 0 auto;"></div>
-        """,
+        """<div style="height: 100%; width: 2px; background-color: #999; margin: 0 auto;"></div>""",
         unsafe_allow_html=True
     )
 
-# --- RIGHT PANEL: Button + Result ---
+# RIGHT: Button aligned with uploader, and result below
 with col_right:
     if uploaded_file:
-        st.markdown("###")  # Spacer
-
-        # Centered custom HTML button (styled)
+        # Button aligned to match upload box
         st.markdown("""
-            <div style='text-align: center; margin-top: 30px;'>
+            <div style='margin-top: 38px; text-align: center;'>
                 <button style='
                     font-size: 18px;
                     padding: 10px 30px;
@@ -123,7 +110,7 @@ with col_right:
             </div>
         """, unsafe_allow_html=True)
 
-        # Hidden Streamlit button (used to trigger backend)
+        # Hidden real Streamlit button
         verify_clicked = st.button("Verify QR", key="verify-button")
 
         if verify_clicked:
@@ -136,14 +123,12 @@ with col_right:
                 proba = model.predict_proba([features])[0]
                 label = "Original" if prediction == 0 else "Recaptured"
                 confidence = np.max(proba) * 100
-
                 card_class = "original" if label == "Original" else "recaptured"
 
-                # Result card pushed down with margin
                 st.markdown(f"""
-                    <div class='result-card {card_class}' style='margin-top: 40px !important;'>
+                    <div class='result-card {card_class}' style='margin-top: 50px;'>
                         {label}<br/>
-                        <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
+                        <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
                     </div>
                 """, unsafe_allow_html=True)
             else:
