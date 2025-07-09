@@ -114,29 +114,29 @@ with col_divider:
 # RIGHT PANEL
 with col_right:
     st.markdown("<div class='button-align'>", unsafe_allow_html=True)
-    st.button("🔍 Verify QR", key="verify_button")
+    verify_clicked = st.button("🔍 Verify QR", key="verify_button")
     st.markdown("</div>", unsafe_allow_html=True)
-        if verify_clicked:
-            import numpy as np
-            import cv2
-            from feature_extractor import extract_white_area_features
-            from joblib import load
-            model = load("rf_white_features.pkl")
-            image_np = np.array(image_pil)
-            image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-            features = extract_white_area_features(image_cv2)
 
-            if features is not None:
-                prediction = model.predict([features])[0]
-                proba = model.predict_proba([features])[0]
-                label = "Original" if prediction == 0 else "Recaptured"
-                confidence = np.max(proba) * 100
-                card_class = "original" if label == "Original" else "recaptured"
-                st.markdown(f"""
-                    <div class='result-card {card_class}'>
-                        {label}<br/>
-                        <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
-                    </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.warning("⚠️ Could not extract white area features.")
+# Processing after button click
+if verify_clicked:
+    if image_pil is not None:
+        image_np = np.array(image_pil)
+        image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+        features = extract_white_area_features(image_cv2)
+
+        if features is not None:
+            prediction = model.predict([features])[0]
+            proba = model.predict_proba([features])[0]
+            label = "Original" if prediction == 0 else "Recaptured"
+            confidence = np.max(proba) * 100
+            card_class = "original" if label == "Original" else "recaptured"
+            st.markdown(f"""
+                <div class='result-card {card_class}'>
+                    {label}<br/>
+                    <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.warning("⚠️ Could not extract white area features.")
+    else:
+        st.warning("⚠️ Please upload an image first.")
