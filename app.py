@@ -15,16 +15,21 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
 st.markdown("""
     <style>
-    /* Hide all scrollbars */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stVerticalBlock"] {
+     html, body, .main, .block-container {
         overflow: hidden !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    [data-testid="stAppViewContainer"] {
+        overflow: hidden !important;
+        height: 100% !important;
     }
 
     ::-webkit-scrollbar {
-        width: 0px;
-        background: transparent;
+        display: none;
     }
-
     .header-container {
         padding-top: 0.5rem;
         margin-bottom: 1rem;
