@@ -23,12 +23,16 @@ st.markdown("""
     .header-container h1 {
         font-size: 1.5rem;
         text-align: center;
-        color: white;
     }
     .header-container p {
         font-size: 0.9rem;
         text-align: center;
-        color: white;
+    }
+    .divider-line {
+        height: 100%;
+        width: 1px;
+        background-color: #888;
+        margin: auto;
     }
     .result-card {
         padding: 0.7rem;
@@ -52,6 +56,14 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
+    .right-panel-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        height: 100%;
+        padding-top: 2rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -70,8 +82,8 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Two-pane layout (Left 60%, Right 40%)
-left_col, right_col = st.columns([0.6, 0.4])
+# Layout with a vertical divider (60 | 1 | 39)
+left_col, divider_col, right_col = st.columns([0.6, 0.01, 0.39])
 
 # Left Panel: Upload & Display
 with left_col:
@@ -87,15 +99,15 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Right Panel: Centered Button + Result
+# Divider line
+with divider_col:
+    st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
+
+# Right Panel: Centered content
 with right_col:
     if uploaded_file:
-        # Container to vertically center the button and result
-        st.markdown("""
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-        """, unsafe_allow_html=True)
+        st.markdown("<div class='right-panel-content'>", unsafe_allow_html=True)
 
-        # Centered Button
         verify_button = st.button("🔍 Verify QR")
 
         if verify_button:
