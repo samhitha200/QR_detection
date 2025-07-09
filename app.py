@@ -68,15 +68,13 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# --- Main 2-panel layout ---
-col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
+# --- Upload + Verify QR button in same horizontal row ---
+upload_col, button_col = st.columns([0.85, 0.15])
 
-# Store uploaded image
 image_pil = None
 verify_clicked = False
 
-# --- LEFT: Upload + Preview ---
-with col_left:
+with upload_col:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
@@ -85,46 +83,32 @@ with col_left:
         img_base64 = get_image_base64(resized)
         st.markdown(
             f"<div style='text-align: center;'><img src='data:image/jpeg;base64,{img_base64}' "
-            f"style='border-radius: 10px; max-width: 100%; height: auto; margin-top: 15px;'/></div>",
+            f"style='border-radius: 10px; max-width: 100%; height: auto;'/></div>",
             unsafe_allow_html=True
         )
 
-# --- MIDDLE DIVIDER ---
-with col_divider:
-    st.markdown(
-        """<div style="height: 100%; width: 2px; background-color: #999; margin: 0 auto;"></div>""",
-        unsafe_allow_html=True
-    )
+with button_col:
+    st.markdown("###")  # Spacer to align with uploader
+    verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
 
-# --- RIGHT: Centered Button + Result ---
-with col_right:
-    if image_pil:
-        # Match vertical height of uploader box visually
-        st.markdown("<div style='height: 72px;'></div>", unsafe_allow_html=True)
+# --- Show result if button clicked ---
+if image_pil and verify_clicked:
+    image_np = np.array(image_pil)
+    image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+    features = extract_white_area_features(image_cv2)
 
-        # Centered button
-        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-        verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
-        st.markdown("</div>", unsafe_allow_html=True)
+    if features is not None:
+        prediction = model.predict([features])[0]
+        proba = model.predict_proba([features])[0]
+        label = "Original" if prediction == 0 else "Recaptured"
+        confidence = np.max(proba) * 100
+        card_class = "original" if label == "Original" else "recaptured"
 
-        # Result block
-        if verify_clicked:
-            image_np = np.array(image_pil)
-            image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-            features = extract_white_area_features(image_cv2)
-
-            if features is not None:
-                prediction = model.predict([features])[0]
-                proba = model.predict_proba([features])[0]
-                label = "Original" if prediction == 0 else "Recaptured"
-                confidence = np.max(proba) * 100
-                card_class = "original" if label == "Original" else "recaptured"
-
-                st.markdown(f"""
-                    <div class='result-card {card_class}' style='margin-top: 50px;'>
-                        {label}<br/>
-                        <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
-                    </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.warning("⚠️ Could not extract white area features.")
+        st.markdown(f"""
+            <div class='result-card {card_class}'>
+                {label}<br/>
+                <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.warning("⚠️ Could not extract white area features.")
