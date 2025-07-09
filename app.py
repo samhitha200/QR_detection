@@ -12,7 +12,6 @@ model = load("rf_white_features.pkl")
 
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# CSS Styling
 st.markdown("""
     <style>
     .header-container {
@@ -33,6 +32,21 @@ st.markdown("""
         background-color: #888;
         margin: 0 auto;
     }
+    .button-align {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 42px;
+        width: 100%;
+    }
+    .stButton>button {
+        font-size: 18px !important;
+        padding: 10px 24px !important;
+        border: 2px solid #e74c3c !important;
+        color: #e74c3c !important;
+        background-color: transparent !important;
+        border-radius: 8px !important;
+    }
     .result-card {
         padding: 0.7rem;
         border-radius: 12px;
@@ -41,9 +55,11 @@ st.markdown("""
         text-align: center;
         font-size: 1rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 1.5rem;
+        margin-top: 3.5rem;
         border: 2px solid;
-        width: 100%;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
     }
     .original {
         background-color: #2e7d32;
@@ -55,6 +71,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 # Header
 st.markdown("""
