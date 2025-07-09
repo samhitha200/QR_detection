@@ -33,11 +33,11 @@ st.markdown("""
         margin: 0 auto;
     }
     .button-align {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 42px;
-        width: 100%;
+         display: flex;
+         justify-content: flex-start;
+         align-items: center;
+         margin-top: 42px;
+         margin-left: calc(100% - 24cm);
     }
     .stButton>button {
         font-size: 18px !important;
@@ -53,9 +53,9 @@ st.markdown("""
         color: white;
         font-weight: bold;
         text-align: center;
-        font-size: 1rem;
+        font-size: 2.5rem;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        margin-top: 3.5rem;
+        margin-top: 5 rem;
         border: 2px solid;
         width: 60%;
         margin-left: auto;
