@@ -103,17 +103,19 @@ with left_col:
 with divider_col:
     st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
 
-# Right Panel with visual separator and centered content
+# Right Panel: Simulated vertical divider + centered button & result
 with right_col:
     if uploaded_file:
+        # Custom styled container with simulated border and manual spacing
         st.markdown("""
             <div style="
-                border-left: 1px solid #666;
+                border-left: 2px solid #999;
                 padding-left: 30px;
+                height: 450px;
                 display: flex;
                 flex-direction: column;
+                justify-content: center;
                 align-items: center;
-                gap: 20px;
             ">
         """, unsafe_allow_html=True)
 
