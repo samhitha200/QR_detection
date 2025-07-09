@@ -98,11 +98,16 @@ with col_divider:
 
 # --- RIGHT: Centered Button + Result ---
 with col_right:
-    if image_pil:
-        # Centered button aligned with uploader
-        st.markdown("<div style='margin-top: 38px; text-align: center;'>", unsafe_allow_html=True)
-        verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
-        st.markdown("</div>", unsafe_allow_html=True)
+    if image_pil is not None:
+        # Match uploader height
+        st.markdown("<div style='height: 92px;'></div>", unsafe_allow_html=True)
+
+        # Center the button
+        center_button = st.container()
+        with center_button:
+            st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+            verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
+            st.markdown("</div>", unsafe_allow_html=True)
 
         if verify_clicked:
             image_np = np.array(image_pil)
