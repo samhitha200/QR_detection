@@ -33,20 +33,22 @@ st.markdown("""
         margin: 0 auto;
     }
     .button-align {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 42px;
-        width: 100%;
+    display: flex;
+    justify-content: flex-end;  /* ⬅️ align to the right */
+    align-items: center;
+    margin-top: 42px;
+    width: 100%;
+    padding-right: 20px;  /* Optional spacing from the right edge */
     }
-    .stButton>button {
-        font-size: 18px !important;
-        padding: 10px 24px !important;
-        border: 2px solid #e74c3c !important;
-        color: #e74c3c !important;
-        background-color: transparent !important;
-        border-radius: 8px !important;
-    }
+.stButton>button {
+    font-size: 18px !important;
+    padding: 10px 24px !important;
+    border: 2px solid #e74c3c !important;
+    color: #e74c3c !important;
+    background-color: transparent !important;
+    border-radius: 8px !important;
+}
+
     .result-card {
         padding: 0.7rem;
         border-radius: 12px;
@@ -111,11 +113,9 @@ with col_divider:
 
 # RIGHT PANEL
 with col_right:
-    if uploaded_file:
-        st.markdown("<div class='button-align'>", unsafe_allow_html=True)
-        verify_clicked = st.button("🔍 Verify QR", key="verify_button")
-        st.markdown("</div>", unsafe_allow_html=True)
-
+    st.markdown("<div class='button-align'>", unsafe_allow_html=True)
+    st.button("🔍 Verify QR", key="verify_button")
+    st.markdown("</div>", unsafe_allow_html=True)
         if verify_clicked:
             import numpy as np
             import cv2
