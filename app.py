@@ -57,17 +57,17 @@ st.markdown("""
     }
     .center-btn-container {
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         margin-top: 38px;
-        margin-left: 150px; /* shift button right manually */
     }
     .stButton>button {
-        font-size: 20px !important;
-        padding: 15px 30px !important;
-        background-color: #1a73e8 !important;
-        color: none !important;
-        border: none !important;
+        font-size: 18px !important;
+        padding: 12px 28px !important;
+        border: 2px solid #e74c3c !important;
+        color: #e74c3c !important;
+        background-color: transparent !important;
         border-radius: 8px !important;
+        cursor: pointer;
     }
     </style>
 """, unsafe_allow_html=True)
