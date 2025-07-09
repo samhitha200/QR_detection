@@ -115,7 +115,7 @@ with col_divider:
 with col_right:
     if uploaded_file:
         st.markdown("<div class='button-align'><div class='button-wrapper'>", unsafe_allow_html=True)
-        st.button("🔍 Verify QR", key="verify_button")
+        verify_clicked= st.button("🔍 Verify QR", key="verify_button")
         st.markdown("</div></div>", unsafe_allow_html=True)
 
         if verify_clicked:
