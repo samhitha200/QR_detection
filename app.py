@@ -44,8 +44,8 @@ st.markdown("""
     }
 
     .stButton>button {
-        font-size: 18px !important;
-        padding: 10px 24px !important;
+        font-size: 20px !important;
+        padding: 15px 24px !important;
         border: 2px solid #e74c3c !important;
         color: #e74c3c !important;
         background-color: transparent !important;
@@ -146,10 +146,11 @@ with col_right:
                 card_class = "original" if label == "Original" else "recaptured"
 
                 st.markdown(f"""
-                    <div class='result-card {card_class}'>
-                        {label}<br/>
-                        <span style='font-size: 0.95rem;'>Confidence: {confidence:.2f}%</span>
-                    </div>
-                """, unsafe_allow_html=True)
+    <div class='result-card {card_class}'>
+        <div style='font-size: 1.8rem; text-transform: uppercase;'>{label}</div>
+        <div style='font-size: 0.85rem; margin-top: 6px;'>Confidence: {confidence:.2f}%</div>
+    </div>
+""", unsafe_allow_html=True)
+
             else:
                 st.warning("⚠️ Could not extract white area features.")
