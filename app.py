@@ -28,12 +28,6 @@ st.markdown("""
         font-size: 0.9rem;
         text-align: center;
     }
-    .divider-line {
-        height: 100%;
-        width: 1px;
-        background-color: #888;
-        margin: auto;
-    }
     .result-card {
         padding: 0.7rem;
         border-radius: 12px;
@@ -56,14 +50,6 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    .right-panel-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        height: 100%;
-        padding-top: 2rem;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -82,12 +68,20 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# Layout with a vertical divider (60 | 1 | 39)
-left_col, divider_col, right_col = st.columns([0.6, 0.01, 0.39])
+# Upload + Button aligned row
+top_left, top_right = st.columns([0.6, 0.4])
 
-# Left Panel: Upload & Display
-with left_col:
+with top_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
+
+with top_right:
+    verify_clicked = st.button("🔍 Verify QR", use_container_width=True)
+
+# Image + Result row
+bottom_left, bottom_right = st.columns([0.6, 0.4])
+
+# Left: Display Image
+with bottom_left:
     if uploaded_file:
         image_pil = Image.open(uploaded_file).convert("RGB")
         resized = image_pil.copy()
@@ -99,47 +93,25 @@ with left_col:
             unsafe_allow_html=True
         )
 
-# Divider line
-with divider_col:
-    st.markdown("<div class='divider-line'></div>", unsafe_allow_html=True)
+# Right: Result card
+with bottom_right:
+    if uploaded_file and verify_clicked:
+        image_np = np.array(image_pil)
+        image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+        features = extract_white_area_features(image_cv2)
 
-# Right Panel: Simulated vertical divider + centered button & result
-with right_col:
-    if uploaded_file:
-        # Custom styled container with simulated border and manual spacing
-        st.markdown("""
-            <div style="
-                border-left: 2px solid #999;
-                padding-left: 30px;
-                height: 450px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            ">
-        """, unsafe_allow_html=True)
+        if features is not None:
+            prediction = model.predict([features])[0]
+            proba = model.predict_proba([features])[0]
+            label = "Original" if prediction == 0 else "Recaptured"
+            confidence = np.max(proba) * 100
 
-        verify_button = st.button("🔍 Verify QR")
-
-        if verify_button:
-            image_np = np.array(image_pil)
-            image_cv2 = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-            features = extract_white_area_features(image_cv2)
-
-            if features is not None:
-                prediction = model.predict([features])[0]
-                proba = model.predict_proba([features])[0]
-                label = "Original" if prediction == 0 else "Recaptured"
-                confidence = np.max(proba) * 100
-
-                card_class = "original" if label == "Original" else "recaptured"
-                st.markdown(f"""
-                    <div class='result-card {card_class}'>
-                        {label}<br/>
-                        <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
-                    </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.warning("⚠️ Could not extract white area features.")
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            card_class = "original" if label == "Original" else "recaptured"
+            st.markdown(f"""
+                <div class='result-card {card_class}'>
+                    {label}<br/>
+                    <span style='font-size: 0.85rem;'>Confidence: {confidence:.2f}%</span>
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.warning("⚠️ Could not extract white area features.")
