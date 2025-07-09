@@ -13,7 +13,6 @@ model = load("rf_white_features.pkl")
 # Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
-# Custom CSS
 st.markdown("""
     <style>
     .header-container {
@@ -28,12 +27,22 @@ st.markdown("""
         font-size: 0.9rem;
         text-align: center;
     }
+
+    /* Adaptive Divider Line */
     .divider-line {
-        height: 100%;
+        height: 100vh;
         width: 2px;
-        background-color: #888;
+        background-color: black; /* visible in light theme */
         margin: 0 auto;
+        opacity: 0.8;
     }
+
+    @media (prefers-color-scheme: dark) {
+        .divider-line {
+            background-color: white; /* visible in dark theme */
+        }
+    }
+
     .stButton>button {
         font-size: 18px !important;
         padding: 10px 24px !important;
@@ -42,6 +51,7 @@ st.markdown("""
         background-color: transparent !important;
         border-radius: 8px !important;
     }
+
     .result-card {
         padding: 0.7rem;
         border-radius: 12px;
@@ -64,20 +74,6 @@ st.markdown("""
         background-color: #ef6c00;
         border-color: #bf360c;
     }
-    .divider-line {
-        height: 100vh;
-        width: 2px;
-        background-color: black;
-        margin: 0 auto;
-        opacity: 0.8;
-    }
-
-/* Override for dark mode (white line) */
-@media (prefers-color-scheme: dark) {
-    .divider-line {
-        background-color: white;
-    }
-}
     </style>
 """, unsafe_allow_html=True)
 
