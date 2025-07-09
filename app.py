@@ -71,6 +71,10 @@ def get_image_base64(pil_img):
 # --- Main 2-panel layout ---
 col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
 
+# Store uploaded image
+image_pil = None
+verify_clicked = False
+
 # --- LEFT: Upload + Preview ---
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
@@ -92,26 +96,13 @@ with col_divider:
         unsafe_allow_html=True
     )
 
-# --- RIGHT: Button + Result ---
+# --- RIGHT: Centered Button + Result ---
 with col_right:
-    if uploaded_file:
-        # Button aligned with uploader box
-        st.markdown("""
-            <div style='margin-top: 38px; text-align: center;'>
-                <button style='
-                    font-size: 18px;
-                    padding: 10px 30px;
-                    border: 2px solid #e74c3c;
-                    background-color: transparent;
-                    color: #e74c3c;
-                    border-radius: 8px;
-                    cursor: pointer;
-                ' onclick="document.getElementById('verify-button').click()">🔍 Verify QR</button>
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Hidden functional Streamlit button
-        verify_clicked = st.button("Verify QR", key="verify-button")
+    if image_pil:
+        # Centered button aligned with uploader
+        st.markdown("<div style='margin-top: 38px; text-align: center;'>", unsafe_allow_html=True)
+        verify_clicked = st.button("🔍 Verify QR", key="verify_button", help="Click to verify authenticity")
+        st.markdown("</div>", unsafe_allow_html=True)
 
         if verify_clicked:
             image_np = np.array(image_pil)
