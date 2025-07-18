@@ -15,12 +15,12 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
 st.markdown("""
     <style>
-     html, body, .main, .block-container {
-        overflow: hidden !important;
-        height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+    html, body, .main, .block-container {
+    overflow: hidden !important;     /* Prevent all scrolling */
+    min-height: 100vh !important;    /* At least full screen height */
+    margin: 0 !important;
+    padding: 0 !important;
+}
 
     [data-testid="stAppViewContainer"] {
         overflow: hidden !important;
