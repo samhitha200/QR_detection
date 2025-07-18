@@ -16,11 +16,11 @@ st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 st.markdown("""
     <style>
     html, body, .main, .block-container {
-    overflow: hidden !important;     /* Prevent all scrolling */
-    min-height: 100vh !important;    /* At least full screen height */
-    margin: 0 !important;
-    padding: 0 !important;
-}
+        overflow: hidden !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
     [data-testid="stAppViewContainer"] {
         overflow: hidden !important;
@@ -30,8 +30,10 @@ st.markdown("""
     ::-webkit-scrollbar {
         display: none;
     }
+
     .header-container {
-        padding-top: 0.5rem;
+        padding-top: 2rem;     /* Push header down */
+        margin-top: 2rem;      /* Additional vertical space */
         margin-bottom: 1rem;
     }
     .header-container h1 {
@@ -47,14 +49,14 @@ st.markdown("""
     .divider-line {
         height: 60vh;
         width: 2px;
-        background-color: black; /* visible in light theme */
+        background-color: black;
         margin: 0 auto;
         opacity: 0.8;
     }
 
     @media (prefers-color-scheme: dark) {
         .divider-line {
-            background-color: white; /* visible in dark theme */
+            background-color: white;
         }
     }
 
@@ -81,6 +83,7 @@ st.markdown("""
         margin-left: 160px;
         margin-right: auto;
     }
+
     .original {
         background-color: #2e7d32;
         border-color: #1b5e20;
@@ -92,13 +95,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("""
-    <div class="header-container">
-        <h1>QR Code Authenticity Validator</h1>
-        <p>Distinguish between Original vs Recaptured QR codes</p>
-    </div>
-""", unsafe_allow_html=True)
 
 # Base64 encoder for image preview
 def get_image_base64(pil_img):
