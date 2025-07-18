@@ -13,6 +13,7 @@ model = load("rf_white_features.pkl")
 # Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
 
+# CSS Styling
 st.markdown("""
     <style>
     html, body, .main, .block-container {
@@ -20,36 +21,36 @@ st.markdown("""
         min-height: 100vh !important;
         margin: 0 !important;
         padding: 0 !important;
+        display: flex;
+        flex-direction: column;
     }
 
     [data-testid="stAppViewContainer"] {
         overflow: hidden !important;
-        height: 100% !important;
-    }
-
-    ::-webkit-scrollbar {
-        display: none;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     .header-container {
-        padding-top: 2rem;     /* Push header down */
-        margin-top: 2rem;      /* Additional vertical space */
-        margin-bottom: 1rem;
-    }
-    .header-container h1 {
-        font-size: 1.5rem;
-        text-align: center;
-    }
-    .header-container p {
-        font-size: 0.9rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
         text-align: center;
     }
 
-    /* Adaptive Divider Line */
+    .header-container h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-container p {
+        font-size: 1rem;
+    }
+
     .divider-line {
-        height: 60vh;
+        height: 70vh;
         width: 2px;
-        background-color: black;
+        background-color: #999;
         margin: 0 auto;
         opacity: 0.8;
     }
@@ -80,7 +81,7 @@ st.markdown("""
         margin-top: 150px;
         border: 2px solid;
         width: 60%;
-        margin-left: 160px;
+        margin-left: auto;
         margin-right: auto;
     }
 
@@ -88,6 +89,7 @@ st.markdown("""
         background-color: #2e7d32;
         border-color: #1b5e20;
     }
+
     .recaptured {
         background-color: #ef6c00;
         border-color: #bf360c;
@@ -95,6 +97,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# HEADER: Always at top
+st.markdown("""
+    <div class="header-container">
+        <h1>QR Code Authenticity Validator</h1>
+        <p>Distinguish between Original vs Recaptured QR codes</p>
+    </div>
+""", unsafe_allow_html=True)
 
 # Base64 encoder for image preview
 def get_image_base64(pil_img):
@@ -103,12 +112,12 @@ def get_image_base64(pil_img):
     byte_im = buf.getvalue()
     return base64.b64encode(byte_im).decode()
 
-# 3 Column Layout: Left | Divider | Right
+# --- APP CONTENT ---
 col_left, col_divider, col_right = st.columns([0.53, 0.02, 0.45])
 
 image_pil = None
 
-# --- LEFT PANEL: Upload and Display ---
+# LEFT COLUMN: File upload and preview
 with col_left:
     uploaded_file = st.file_uploader("📤 Upload a QR Code image", type=["jpg", "jpeg", "png"])
     if uploaded_file:
@@ -118,7 +127,7 @@ with col_left:
         img_base64 = get_image_base64(resized)
 
         st.markdown(
-           f"""
+            f"""
             <div style='text-align: center; padding: 10px;'>
                 <img src='data:image/jpeg;base64,{img_base64}'
                     style='border-radius: 10px; max-width: 300px; height: auto;' />
@@ -127,26 +136,16 @@ with col_left:
             unsafe_allow_html=True
         )
 
+# DIVIDER COLUMN: Thin vertical line
 with col_divider:
-    st.markdown("""
-        <div style="
-            height: 70vh;
-            width: 2px;
-            margin: 0 auto;
-            background-color: #999;
-            opacity: 0.8;
-        "></div>
-    """, unsafe_allow_html=True)
+    st.markdown("""<div class="divider-line"></div>""", unsafe_allow_html=True)
 
-# --- RIGHT PANEL: Centered Button & Result ---
+# RIGHT COLUMN: Button and result display
 with col_right:
     if image_pil:
-        # Use internal columns to center the button manually
         col_a, col_btn, col_b = st.columns([0.6, 0.5, 0.38])
         with col_btn:
-            st.markdown("<div style='margin-top: 40px;'>", unsafe_allow_html=True)  # increase margin-top
             verify_clicked = st.button("🔍 Verify QR", key="verify_button")
-            st.markdown("</div>", unsafe_allow_html=True)
 
         if verify_clicked:
             image_np = np.array(image_pil)
@@ -161,15 +160,14 @@ with col_right:
                 card_class = "original" if label == "Original" else "recaptured"
 
                 st.markdown(f"""
-                <div class='result-card {card_class}'>
-                <div style='font-size: 2rem; text-transform: uppercase; letter-spacing: 1px;'>
-                {label}
-                </div>
-                <div style='font-size: 1 rem; margin-top: 6px; font-weight: normal;'>
-            Confidence: {confidence:.2f}%
-        </div>
-    </div>
-""", unsafe_allow_html=True)
-
+                    <div class='result-card {card_class}'>
+                        <div style='font-size: 2rem; text-transform: uppercase; letter-spacing: 1px;'>
+                            {label}
+                        </div>
+                        <div style='font-size: 1rem; margin-top: 6px; font-weight: normal;'>
+                            Confidence: {confidence:.2f}%
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
             else:
                 st.warning("⚠️ Could not extract white area features.")
