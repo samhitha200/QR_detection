@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from PIL import Image
 from joblib import load
-from feature_extractor_new import extract_white_area_features
+from feature_extractor import extract_white_area_features
 from io import BytesIO
 import base64
 
