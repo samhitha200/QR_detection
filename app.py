@@ -8,7 +8,7 @@ from io import BytesIO
 import base64
 
 # Load model
-model = load("rf_white_features_new.pkl")
+model = load("rf_white_features.pkl")
 
 # Page config
 st.set_page_config(page_title="QR Code Authenticity Validator", layout="wide")
